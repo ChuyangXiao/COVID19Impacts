@@ -1,6 +1,6 @@
 --- 
-title: "YOUR TITLE HERE"
-author: "YOUR NAMES HERE"
+title: "An Exploratory Study on COVID-19's Impacts on Import Goods to the US"
+author: "Chen Jin & Chuyang Xiao"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
