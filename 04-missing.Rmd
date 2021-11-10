@@ -1,1 +1,4 @@
 # Missing values
+
+
+Regarding the missing values in the raw data,
