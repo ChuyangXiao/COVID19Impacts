@@ -1,4 +1,4 @@
 # Missing values
 
 
-Regarding the missing values in the raw data, we could make following changes, for instance.
+Regarding the missing values in the raw data, we could make following changes, for instance...
