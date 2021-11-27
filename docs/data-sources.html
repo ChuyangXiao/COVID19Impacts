@@ -24,7 +24,7 @@
 <meta name="author" content="Chen Jin &amp; Chuyang Xiao" />
 
 
-<meta name="date" content="2021-11-10" />
+<meta name="date" content="2021-11-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -101,6 +101,28 @@
             <section class="normal" id="section-">
 <div id="data-sources" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Data sources</h1>
+<p style="color:red">
+Describe the data sources: who is responsible for collecting the data? How is it collected? If there were a choice of options, explain how you chose.
+Provide some basic information about the data set: types of variables, number of records, etc. Describe any issues / problems with the data, either known or that you discover.
+(suggested: approximately 1 page)
+</p>
+<ul>
+<li>Source 1</li>
+</ul>
+<p>The first data source comes from the European Center for Disease Prevention and Control and includes the number of COVID-19 cases per 100 000 population and the 14-day notification rate of reported deaths per million population by week and country from the 1st week of 2020 till the 39th week of 2021 (7th Oct 2021).</p>
+<p>This data set has 37037 records in total. Each row contains the corresponding data for a certain day and per country. Specifically, variables included in this data set are country related information-<code>country</code>, <code>country code</code>, and <code>continent</code> (type: string), report type that distinguishes whether it’s cases or deaths-<code>indicator</code> (type: string), time information-<code>year-week</code> (type: datetime), count and statistics-<code>weekly count</code>, <code>rate_14_day</code>, and <code>cumulative</code> (type: numerical).</p>
+<p>Link: <a href="https://www.ecdc.europa.eu/en/publications-data/data-national-14-day-notification-rate-covid-19" class="uri">https://www.ecdc.europa.eu/en/publications-data/data-national-14-day-notification-rate-covid-19</a></p>
+<ul>
+<li>Source 2</li>
+</ul>
+<p>The second data source comes from the United States Census Bureau. It is a full report of the international trade the US participated in from 2020 to 2021. This report not only includes the trading time and trading amount with each trading partner of the US but also records the categories of the trading product.</p>
+<p>There are in total 31 excel files from this source, with each presented and themed around a particular focus (such as by region, by end-use, by trade type and etc.). We discussed and decided to select 10 files that are most relevant to our investigation topics. Data files from this source are mostly represented in a tabular format. The most common variables are balance of payments (BOP) related numerals such as import, export, and balance in millions of dollars. Depending on the division basis, other variables include countries, goods categories, months and etc.</p>
+<p>Link: <a href="https://www.census.gov/foreign-trade/Press-Release/current_press_release/index.html" class="uri">https://www.census.gov/foreign-trade/Press-Release/current_press_release/index.html</a></p>
+<ul>
+<li>Comment</li>
+</ul>
+<p>To ensure the reliability and quality of the data, we searched and collected both of our data from either government or public institution website. Chen collected the international trade related data and Chuyang gathered the Covid related data. In searching for possible options, we tried to find data that are not only trustworthy but also comprehensive. Since we hope to take a holistic view on the Covid impact, having information that span across longer time period would be beneficial to answering our questions, so this becomes a dominant criterion in choosing our data source.</p>
+<p>We thought there might be several issues with our data: For the first data set on Covid, although we pulled it from the authoritative ECDC website, there might still be delays or inaccuracies in recording the information. Especially for underdeveloped regions where circulation of information might not be in a timely manner. For the second source on international trade, we only obtain a subset selection of countries and the time points in certain files are quite limited. This may somehow prevent us from drawing a comparison picture in full.</p>
 
 </div>
             </section>
