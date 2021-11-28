@@ -9,7 +9,7 @@ Provide some basic information about the data set: types of variables, number of
 
 The first data source comes from the European Center for Disease Prevention and Control and includes the number of COVID-19 cases per 100 000 population and the 14-day notification rate of reported deaths per million population by week and country from the 1st week of 2020 till the 39th week of 2021 (7th Oct 2021). 
 
-This data set has 37037 records in total. Each row contains the corresponding data for a certain day and per country. Specifically, variables included in this data set are country related information-`country`, `country code`, and `continent` (type: string),  report type that distinguishes whether it's cases or deaths-`indicator` (type: string), time information-`year-week` (type: datetime), count and statistics-`weekly count`, `rate_14_day`, and `cumulative` (type: numerical).
+This data set has 37036 records in total. Each row contains the corresponding data for a certain day and per country. Specifically, variables included in this data set are country related information-`country`, `country code`, and `continent` (type: string),  report type that distinguishes whether it's cases or deaths-`indicator` (type: string), time information-`year-week` (type: datetime), count and statistics-`weekly count`, `rate_14_day`, and `cumulative` (type: numerical).
 
 Link: https://www.ecdc.europa.eu/en/publications-data/data-national-14-day-notification-rate-covid-19
 
