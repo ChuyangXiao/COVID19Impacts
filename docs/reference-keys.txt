@@ -5,6 +5,3 @@ missing-values
 results
 interactive-component
 conclusion
-section
-section-1
-comment

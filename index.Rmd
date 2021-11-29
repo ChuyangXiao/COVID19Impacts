@@ -1,5 +1,5 @@
 --- 
-title: "An Exploratory Study on COVID-19's Impacts on Import Goods to the US"
+title: "An Exploratory Study on COVID-19's Impacts on International Trades of the US"
 author: "Chen Jin & Chuyang Xiao"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
