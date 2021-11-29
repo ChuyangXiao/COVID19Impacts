@@ -57,7 +57,6 @@ Similar to Exhibit 8, `exp_trade_cat` and `exp_trade_tot` have the export of goo
 ```{r}
 # colnames(us_trade_good)
 ```
-<p style="color:red">#todo ↑这个1里面已经有包括了么?</p>
 
 
 5. Exhibit 13 - U.S. Trade in Goods by Principal End-Use Category
