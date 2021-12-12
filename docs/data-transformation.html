@@ -24,7 +24,7 @@
 <meta name="author" content="Chen Jin &amp; Chuyang Xiao" />
 
 
-<meta name="date" content="2021-11-10" />
+<meta name="date" content="2021-11-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -101,6 +101,102 @@
             <section class="normal" id="section-">
 <div id="data-transformation" class="section level1" number="3">
 <h1><span class="header-section-number">Chapter 3</span> Data transformation</h1>
+<p style="color:red">
+Describe the process of getting the data into a form in which you could work with it in R. If your code does not lend itself to being including in the .Rmd file, provide a link to the folder or file(s) that contain(s) that code.
+(suggested: approximately 1/2 page)
+</p>
+<ul>
+<li>Covid Data</li>
+</ul>
+<p>Our first data source on Covid already comes in a handy csv format, so we can directly read it into R. However, an issue with this data set is that it comes in a long format with each country repeated for hundreds of times among the rows. There are also some redundant information which we won’t be using in our analysis - an example of this is the <code>source</code> column since all 37036 entries in this data set have the exact same value for <code>source</code> as “Epidemic intelligence, national weekly data”, which wouldn’t be helpful in this case.</p>
+<p>So for the transformation, we first split the whole data set into two smaller data sets based on the <code>indicator</code> variable (cases/deaths). For each of the subset, we then used a function to extract the <code>cumulative_count</code> and the <code>weekly_count</code> separately, and also used the pivot_wider() function to transform the data from long to wide format. After the transformation, we also ordered each data set by continent and country names. As a result, we obtained 4 final data sets - “tidy_case_count”, “tidy_case_cum”, “tidy_death_count”, “tidy_death_cum”. As suggested by their names, these are the weekly count and cumulative count for cases and deaths respectively. In these four data sets, each row represents a single country (or a continent) and the columns contain 92 week time points from the 1st week of 2020 to the 39th week of 2021.</p>
+<ul>
+<li>BOP Data</li>
+</ul>
+<p>Our second data source on international trade is a bit more problematic. The original data comes in as excel files and is therefore not organized as data frame format by itself. There are also quite a bit of notes and annotations written outside of the tables in these files, which we would need to take care of.</p>
+<p>In order to follow a reproducible workflow, we still tried and succeeded in using R to read in the files and transform it into a more desirable format. One of the major issues with the excel files is that it uses sub headers within the table, which causes inconsistencies in the column/row names and left the tabular form with a lot of blank entries. In order to handle this, we decided to fix these column/row names by pasting the general main headlines and the underlying sub headers together. By doing so, the newly generated column/row names would now contain all the necessary identifying information and we can then organize and clean the enclosing data accordingly. In addition, we removed the annotations and irrelevant entries by specifying the row numbers at which they lie in. We repeated the above steps for each of our 10 selected files with some minor adjustment to fit each case properly.</p>
+<p>You can find below some details of what our processed data look like:</p>
+<ol style="list-style-type: decimal">
+<li>Exhibit 1 - U.S. International Trade in Goods and Services</li>
+</ol>
+<ul>
+<li>-&gt; <code>int_trade_1</code> (37 obs. * 10 vars)</li>
+</ul>
+<p><code>int_trade_1</code> has monthly record of Exports, Imports, and Balance for each of Goods, Services, and Total (Goods and Services combined). The time period is from Jan. 2019 to Aug. 2021.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Exhibit 8 - U.S. Imports by End-Use Category and Commodity</li>
+</ol>
+<ul>
+<li>-&gt; <code>imp_trade_cat</code> (137 obs. * 9 vars)</li>
+<li>-&gt; <code>imp_trade_tot</code> (6 obs. * 7 vars)</li>
+</ul>
+<p><code>imp_trade_cat</code> and <code>imp_trade_tot</code> have the import of goods for “August 2021”, “July 2021 (R)”, “Monthly Change”, “Year-to-Date 2021” “Year-to-Date 2020”, “Year-to-Date Change”. <code>imp_trade_cat</code> has 137 obs. for each of the specific end-use category, wheres <code>imp_trade_tot</code> is a summary that only has 6 obs. for each of the principal categories.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Exhibit 7 - U.S. Exports of Goods by End-Use Category and Commodity</li>
+</ol>
+<ul>
+<li>-&gt; <code>exp_trade_cat</code> (128 obs. * 8 vars)</li>
+<li>-&gt; <code>exp_trade_tot</code> (6 obs. * 7 vars)</li>
+</ul>
+<p>Similar to Exhibit 8, <code>exp_trade_cat</code> and <code>exp_trade_tot</code> have the export of goods for the above variables. <code>exp_trade_cat</code> has 128 obs. for each of the specific end-use category, wheres <code>exp_trade_tot</code> is a summary that only has 6 obs. for each of the principal categories.</p>
+<p style="color:red">
+#todo 这个和1的区别是啥我有点忘了
+</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Exhibit 12 - U.S. Trade in Goods</li>
+</ol>
+<ul>
+<li>-&gt; <code>us_trade_good</code> (37 obs. * 9 vars)</li>
+</ul>
+<ol start="5" style="list-style-type: decimal">
+<li>Exhibit 13 - U.S. Trade in Goods by Principal End-Use Category</li>
+</ol>
+<ul>
+<li>-&gt; <code>us_trade_pic_export</code> (23 obs. * 10 vars)</li>
+<li>-&gt; <code>us_trade_pic_import</code> (23 obs. * 10 vars)</li>
+</ul>
+<p><code>us_trade_pic_export</code> and <code>us_trade_pic_import</code> have the monthly Export or Import for each of the 6 principal end-use categories. The time period is from Jan. 2019 to Aug. 2021.</p>
+<ol start="6" style="list-style-type: decimal">
+<li>Exhibit 14 - U.S. Trade in Goods by Selected Countries and Areas - Current Year</li>
+</ol>
+<ul>
+<li>-&gt; <code>trade_countries_2021</code> (49 obs. * 11 vars)</li>
+</ul>
+<p><code>trade_countries_2021</code> has the 2021 Trade in Goods BOP data for 49 selected trading partners of US.</p>
+<ol start="7" style="list-style-type: decimal">
+<li>Exhibit 14a - U.S. Trade in Goods by Selected Countries and Areas - Prior Year</li>
+</ol>
+<ul>
+<li>-&gt; <code>trade_countries_2020</code> (49 obs. * 11 vars)</li>
+</ul>
+<p><code>trade_countries_2020</code> has the 2020 Trade in Goods BOP data for 49 selected trading partners of US.</p>
+<ol start="8" style="list-style-type: decimal">
+<li>Exhibit 20 - U.S. Trade in Goods and Services by Selected Countries and Areas - BOP Basis</li>
+</ol>
+<ul>
+<li>-&gt; <code>countries_quarters_bal</code> (19 obs. * 10 vars)</li>
+<li>-&gt; <code>countries_quarters_exp</code> (19 obs. * 10 vars)</li>
+<li>-&gt; <code>countries_quarters_imp</code> (19 obs. * 10 vars)</li>
+</ul>
+<p>This file contains the quarterly BOP of Trade in Goods and Services for 19 selected countries who are active trading partners of the US. We split it into three data sets <code>countries_quarters_bal</code>, <code>countries_quarters_exp</code>, and <code>countries_quarters_imp</code> that summarizes Balance, Export, and Import respectively.</p>
+<ol start="9" style="list-style-type: decimal">
+<li>Exhibit 20a - U.S. Trade in Goods by Selected Countries and Areas - BOP Basis</li>
+</ol>
+<ul>
+<li>-&gt; <code>countries_quarters_goods_bal</code> (19 obs. * 10 vars)</li>
+<li>-&gt; <code>countries_quarters_goods_exp</code> (19 obs. * 10 vars)</li>
+<li>-&gt; <code>countries_quarters_goods_imp</code> (19 obs. * 10 vars)</li>
+</ul>
+<p>Similar to Exhibit 20, this file contains the quarterly BOP for 19 selected countries who are active trading partners of the US, except that it focuses on Trade in Goods only. We also generated three data sets <code>countries_quarters_goods_bal</code>, <code>countries_quarters_goods_exp</code>, and <code>countries_quarters_goods_imp</code> that summarizes Balance, Export, and Import respectively.</p>
+<ol start="10" style="list-style-type: decimal">
+<li>Exhibit 20b - U.S. Trade in Services by Selected Countries and Areas</li>
+</ol>
+<ul>
+<li>-&gt; <code>countries_quarters_services_bal</code> (19 obs. * 10 vars)</li>
+<li>-&gt; <code>countries_quarters_services_exp</code> (19 obs. * 10 vars)</li>
+<li>-&gt; <code>countries_quarters_services_imp</code> (19 obs. * 10 vars)</li>
+</ul>
+<p>Similar to Exhibit 20, this file contains the quarterly BOP for 19 selected countries who are active trading partners of the US, except that it focuses on Trade in Services only. We also generated three data sets <code>countries_quarters_services_bal</code>, <code>countries_quarters_services_exp</code>, and <code>countries_quarters_services_imp</code> that summarizes Balance, Export, and Import respectively.</p>
 
 </div>
             </section>

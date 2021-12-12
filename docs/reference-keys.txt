@@ -8,3 +8,7 @@ conclusion
 section
 section-1
 comment
+load-in-the-data-with-the-first-three-lines-skipped
+combine-the-first-two-lines-to-get-new-column-names
+removed-the-useless-rows
+remove-the-rows-with-na
