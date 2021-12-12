@@ -24,7 +24,7 @@
 <meta name="author" content="Chen Jin &amp; Chuyang Xiao" />
 
 
-<meta name="date" content="2021-11-29" />
+<meta name="date" content="2021-12-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -74,7 +74,12 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
+<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="data-sources.html"><a href="data-sources.html#covid-19-data-from-european-center-for-disease-prevention-and-control"><i class="fa fa-check"></i><b>2.1</b> COVID-19 Data from European Center for Disease Prevention and Control</a></li>
+<li class="chapter" data-level="2.2" data-path="data-sources.html"><a href="data-sources.html#international-trade-data-from-united-states-census-bureau"><i class="fa fa-check"></i><b>2.2</b> International Trade Data from United States Census Bureau</a></li>
+<li class="chapter" data-level="2.3" data-path="data-sources.html"><a href="data-sources.html#comments-and-issues"><i class="fa fa-check"></i><b>2.3</b> Comments and Issues</a></li>
+</ul></li>
 <li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a></li>
 <li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
@@ -101,29 +106,126 @@
             <section class="normal" id="section-">
 <div id="data-sources" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Data sources</h1>
-<p style="color:red">
-Describe the data sources: who is responsible for collecting the data? How is it collected? If there were a choice of options, explain how you chose.
-Provide some basic information about the data set: types of variables, number of records, etc. Describe any issues / problems with the data, either known or that you discover.
-(suggested: approximately 1 page)
-</p>
-<ul>
-<li>Source 1</li>
-</ul>
-<p>The first data source comes from the European Center for Disease Prevention and Control and includes the number of COVID-19 cases per 100 000 population and the 14-day notification rate of reported deaths per million population by week and country from the 1st week of 2020 till the 39th week of 2021 (7th Oct 2021).</p>
-<p>This data set has 37036 records in total. Each row contains the corresponding data for a certain day and per country. Specifically, variables included in this data set are country related information-<code>country</code>, <code>country code</code>, and <code>continent</code> (type: string), report type that distinguishes whether it’s cases or deaths-<code>indicator</code> (type: string), time information-<code>year-week</code> (type: datetime), count and statistics-<code>weekly count</code>, <code>rate_14_day</code>, and <code>cumulative</code> (type: numerical).</p>
-<p>Link: <a href="https://www.ecdc.europa.eu/en/publications-data/data-national-14-day-notification-rate-covid-19" class="uri">https://www.ecdc.europa.eu/en/publications-data/data-national-14-day-notification-rate-covid-19</a></p>
-<ul>
-<li>Source 2</li>
-</ul>
-<p>The second data source comes from the United States Census Bureau. It is a full report of the international trade the US participated in from 2020 to 2021. This report not only includes the trading time and trading amount with each trading partner of the US but also records the categories of the trading product.</p>
+<div id="covid-19-data-from-european-center-for-disease-prevention-and-control" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> COVID-19 Data from European Center for Disease Prevention and Control</h2>
+<p><strong>Dataset : /COVID-19data/dataset 2/data.csv</strong></p>
+<p>The first data source comes from the <a href="https://www.ecdc.europa.eu/en/publications-data/data-national-14-day-notification-rate-covid-19">European Center for Disease Prevention and Control</a>, which includes the number of COVID-19 cases per 100 000 population and the 14-day notification rate of reported deaths per million population by week and country from the 1st week of 2020 (Jan.1st 2021) till the 39th week of 2021 (Oct.7th 2021).</p>
+<p>This data set has 37036 records in total. Each row contains the corresponding data for a certain day and per country. Specifically, variables included in this data set are country related information-<code>country</code>, <code>country code</code>, <code>continent</code>, time information-<code>year-week</code>, count and statistics-<code>weekly count</code>, <code>rate_14_day</code>, <code>cumulative</code>, and indicator variable that distinguishes whether it’s cases or deaths-<code>indicator</code>.</p>
+<table>
+<caption><span id="tab:unnamed-chunk-3">Table 2.1: </span>Major Columns Used</caption>
+<thead>
+<tr class="header">
+<th align="left">ColumnNames</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">country</td>
+<td align="left">Country name (chr)</td>
+</tr>
+<tr class="even">
+<td align="left">country_code</td>
+<td align="left">3 letter code for country (chr)</td>
+</tr>
+<tr class="odd">
+<td align="left">continent</td>
+<td align="left">Geographical continent (chr)</td>
+</tr>
+<tr class="even">
+<td align="left">population</td>
+<td align="left">Country population (num)</td>
+</tr>
+<tr class="odd">
+<td align="left">indicator</td>
+<td align="left">Wether it’s ‘cases’ or ‘deaths’ (chr)</td>
+</tr>
+<tr class="even">
+<td align="left">weekly_count</td>
+<td align="left">Weekly count of cases or deaths (num)</td>
+</tr>
+<tr class="odd">
+<td align="left">year_week</td>
+<td align="left">The week number in a Year (chr)</td>
+</tr>
+<tr class="even">
+<td align="left">cumulative_count</td>
+<td align="left">Cumulative count of cases or deaths (num)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="international-trade-data-from-united-states-census-bureau" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> International Trade Data from United States Census Bureau</h2>
+<p><strong>Dataset : /COVID-19data/dataset 2/data.csv</strong></p>
+<p>The second data source comes from the <a href="https://www.census.gov/foreign-trade/Press-Release/current_press_release/index.html">United States Census Bureau</a>. It is a full report of the international trade the US participated in from 2020 to 2021. This report not only includes the trading time and trading amount with each trading partner of the US but also records the categories of the trading product.</p>
 <p>There are in total 31 excel files from this source, with each presented and themed around a particular focus (such as by region, by end-use, by trade type and etc.). We discussed and decided to select 10 files that are most relevant to our investigation topics. Data files from this source are mostly represented in a tabular format. The most common variables are balance of payments (BOP) related numerals such as import, export, and balance in millions of dollars. Depending on the division basis, other variables include countries, goods categories, months and etc.</p>
-<p>Link: <a href="https://www.census.gov/foreign-trade/Press-Release/current_press_release/index.html" class="uri">https://www.census.gov/foreign-trade/Press-Release/current_press_release/index.html</a></p>
-<ul>
-<li>Comment</li>
-</ul>
+<p>Here are the 10 files that we selected from this source:</p>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>File #</th>
+<th>File Name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>exh1</td>
+<td>U.S. International Trade in Goods and Services</td>
+</tr>
+<tr class="even">
+<td>exh6</td>
+<td>U.S. Trade in Goods by Principal End-Use Category</td>
+</tr>
+<tr class="odd">
+<td>exh7</td>
+<td>U.S. Exports of Goods by End-Use Category and Commodity</td>
+</tr>
+<tr class="even">
+<td>exh8</td>
+<td>U.S. Imports by End-Use Category and Commodity</td>
+</tr>
+<tr class="odd">
+<td>exh12</td>
+<td>U.S. Trade in Goods</td>
+</tr>
+<tr class="even">
+<td>exh13</td>
+<td>U.S. Trade in Goods by Principal End-Use Category</td>
+</tr>
+<tr class="odd">
+<td>exh14a</td>
+<td>U.S. Trade in Goods by Selected Countries and Areas - Prior Year</td>
+</tr>
+<tr class="even">
+<td>exh14</td>
+<td>U.S. Trade in Goods by Selected Countries and Areas - Current Year</td>
+</tr>
+<tr class="odd">
+<td>exh20</td>
+<td>U.S. Trade in Goods and Services by Selected Countries and Areas - BOP Basis</td>
+</tr>
+<tr class="even">
+<td>exh20a</td>
+<td>U.S. Trade in Goods by Selected Countries and Areas - BOP Basis</td>
+</tr>
+<tr class="odd">
+<td>exh20b</td>
+<td>U.S. Trade in Services by Selected Countries and Areas</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="comments-and-issues" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Comments and Issues</h2>
 <p>To ensure the reliability and quality of the data, we searched and collected both of our data from either government or public institution website. Chen collected the international trade related data and Chuyang gathered the Covid related data. In searching for possible options, we tried to find data that are not only trustworthy but also comprehensive. Since we hope to take a holistic view on the Covid impact, having information that span across longer time period would be beneficial to answering our questions, so this becomes a dominant criterion in choosing our data source.</p>
 <p>We thought there might be several issues with our data: For the first data set on Covid, although we pulled it from the authoritative ECDC website, there might still be delays or inaccuracies in recording the information. Especially for underdeveloped regions where circulation of information might not be in a timely manner. For the second source on international trade, we only obtain a subset selection of countries and the time points in certain files are quite limited. This may somehow prevent us from drawing a comparison picture in full.</p>
 
+</div>
 </div>
             </section>
 

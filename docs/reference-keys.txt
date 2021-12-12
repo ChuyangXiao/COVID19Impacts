@@ -5,3 +5,7 @@ missing-values
 results
 interactive-component
 conclusion
+tab:unnamed-chunk-3
+covid-19-data-from-european-center-for-disease-prevention-and-control
+international-trade-data-from-united-states-census-bureau
+comments-and-issues
