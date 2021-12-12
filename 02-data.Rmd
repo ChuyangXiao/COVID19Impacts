@@ -24,7 +24,7 @@ knitr::kable(data.frame(ColumnNames=vars, Description=explains), caption = "Majo
 
 ## International Trade Data from United States Census Bureau
 
-**Dataset : /COVID-19data/dataset 2/data.csv**
+**Dataset : /ft900xlsx/exh__.xlsx**
 
 The second data source comes from the [United States Census Bureau](https://www.census.gov/foreign-trade/Press-Release/current_press_release/index.html). It is a full report of the international trade the US participated in from 2020 to 2021. This report not only includes the trading time and trading amount with each trading partner of the US but also records the categories of the trading product. 
 
