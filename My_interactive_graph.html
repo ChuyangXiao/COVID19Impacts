@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Interactive Graph</title>
+    <script src="https://d3js.org/d3.v7.js"></script>
+  </head>
+
+  <body>
+
+  <script>
+
+// Create svg and initial bars
+
+  var w = 750;
+  var h = 800;
+  var margin = {top: 25, right: 0, bottom: 25,
+      left: 25};
+  var innerWidth = 650;
+  var innerHeight = 300;
+
+  var bardata_e = [{goods: "Foods, Feeds, & Beverages", value: 0},
+                 {goods: "Industrial Supplies", value: 0},
+                 {goods: "Capital Goods", value: 0},
+                 {goods: "Automotive Vehicles", value: 0},
+                 {goods: "Consumer Goods", value: 0},
+                 {goods: "Other Goods", value: 0}]
+                 
+  var bardata_i = [{goods: "Foods, Feeds, & Beverages", value: 0},
+                 {goods: "Industrial Supplies", value: 0},
+                 {goods: "Capital Goods", value: 0},
+                 {goods: "Automotive Vehicles", value: 0},
+                 {goods: "Consumer Goods", value: 0},
+                 {goods: "Other Goods", value: 0}]
+  
+  var bardata1_e = [{goods: "Foods, Feeds, & Beverages", value: 10.982},
+                 {goods: "Industrial Supplies", value: 44.800},
+                 {goods: "Capital Goods", value: 44.294},
+                 {goods: "Automotive Vehicles", value: 13.203},
+                 {goods: "Consumer Goods", value: 16.374},
+                 {goods: "Other Goods", value: 5.197}]
+
+  var bardata1_i = [{goods: "Foods, Feeds, & Beverages", value: 12.959},
+                 {goods: "Industrial Supplies", value: 41.639},
+                 {goods: "Capital Goods", value: 55.268},
+                 {goods: "Automotive Vehicles", value: 29.416},
+                 {goods: "Consumer Goods", value: 52.983},
+                 {goods: "Other Goods", value: 9.719}]                 
+      					
+  var bardata2_e = [{goods: "Foods, Feeds, & Beverages", value: 11.294},
+                {goods: "Industrial Supplies", value: 44.387},
+                {goods: "Capital Goods", value: 44.403},
+                {goods: "Automotive Vehicles", value: 13.309},
+                {goods: "Consumer Goods", value: 15.998},
+                {goods: "Other Goods", value: 5.659}]
+                
+  var bardata2_i = [{goods: "Foods, Feeds, & Beverages", value: 12.526},
+                {goods: "Industrial Supplies", value: 40.792},
+                {goods: "Capital Goods", value: 52.302},
+                {goods: "Automotive Vehicles", value: 30.590},
+                {goods: "Consumer Goods", value: 51.565},
+                {goods: "Other Goods", value: 9.823}]
+
+  var bardata3_e = [{goods: "Foods, Feeds, & Beverages", value: 11.075},
+                {goods: "Industrial Supplies", value: 41.632},
+                {goods: "Capital Goods", value: 42.710},
+                {goods: "Automotive Vehicles", value: 11.267},
+                {goods: "Consumer Goods", value: 14.720},
+                {goods: "Other Goods", value: 5.079}]
+                
+  var bardata3_i = [{goods: "Foods, Feeds, & Beverages", value: 12.870},
+                {goods: "Industrial Supplies", value: 41.380},
+                {goods: "Capital Goods", value: 54.034},
+                {goods: "Automotive Vehicles", value: 28.125},
+                {goods: "Consumer Goods", value: 48.018},
+                {goods: "Other Goods", value: 9.877}]
+
+
+  var bardata4_e = [{goods: "Foods, Feeds, & Beverages", value: 11.228},
+                {goods: "Industrial Supplies", value: 32.904},
+                {goods: "Capital Goods", value: 32.371},
+                {goods: "Automotive Vehicles", value: 3.708},
+                {goods: "Consumer Goods", value: 10.368},
+                {goods: "Other Goods", value: 4.349}]
+  
+  var bardata4_i = [{goods: "Foods, Feeds, & Beverages", value: 12.135},
+                {goods: "Industrial Supplies", value: 41.597},
+                {goods: "Capital Goods", value: 48.574},
+                {goods: "Automotive Vehicles", value: 13.525},
+                {goods: "Consumer Goods", value: 45.187},
+                {goods: "Other Goods", value: 7.535}]
+                
+  var bardata5_e = [{goods: "Foods, Feeds, & Beverages", value: 10.710},
+                {goods: "Industrial Supplies", value: 30.417},
+                {goods: "Capital Goods", value: 31.791},
+                {goods: "Automotive Vehicles", value: 3.350},
+                {goods: "Consumer Goods", value: 10.989},
+                {goods: "Other Goods", value: 3.721}]
+
+  var bardata5_i = [{goods: "Foods, Feeds, & Beverages", value: 12.131},
+                {goods: "Industrial Supplies", value: 43.874},
+                {goods: "Capital Goods", value: 48.011},
+                {goods: "Automotive Vehicles", value: 9.023},
+                {goods: "Consumer Goods", value: 46.545},
+                {goods: "Other Goods", value: 7.343}]
+
+  var bardata6_e = [{goods: "Foods, Feeds, & Beverages", value: 10.383},
+                {goods: "Industrial Supplies", value: 32.955},
+                {goods: "Capital Goods", value: 35.382},
+                {goods: "Automotive Vehicles", value: 8.270},
+                {goods: "Consumer Goods", value: 12.344},
+                {goods: "Other Goods", value: 4.132}]
+
+  var bardata6_i = [{goods: "Foods, Feeds, & Beverages", value: 12.404},
+                {goods: "Industrial Supplies", value: 35.730},
+                {goods: "Capital Goods", value: 49.974},
+                {goods: "Automotive Vehicles", value: 18.616},
+                {goods: "Consumer Goods", value: 50.725},
+                {goods: "Other Goods", value: 7.187}]
+
+  var bardata7_e = [{goods: "Foods, Feeds, & Beverages", value: 10.690},
+                {goods: "Industrial Supplies", value: 35.534},
+                {goods: "Capital Goods", value: 37.764},
+                {goods: "Automotive Vehicles", value: 11.980},
+                {goods: "Consumer Goods", value: 14.837},
+                {goods: "Other Goods", value: 4.804}]
+
+  var bardata7_i = [{goods: "Foods, Feeds, & Beverages", value: 12.702},
+                {goods: "Industrial Supplies", value: 39.872},
+                {goods: "Capital Goods", value: 54.327},
+                {goods: "Automotive Vehicles", value: 26.074},
+                {goods: "Consumer Goods", value: 53.985},
+                {goods: "Other Goods", value: 8.621}]
+ 
+  var bardata8_e = [{goods: "Foods, Feeds, & Beverages", value: 11.574},
+                {goods: "Industrial Supplies", value: 39.015},
+                {goods: "Capital Goods", value: 36.533},
+                {goods: "Automotive Vehicles", value: 12.019},
+                {goods: "Consumer Goods", value: 14.977},
+                {goods: "Other Goods", value: 4.551}]
+
+  var bardata8_i = [{goods: "Foods, Feeds, & Beverages", value: 13.387},
+                {goods: "Industrial Supplies", value: 38.249},
+                {goods: "Capital Goods", value: 54.544},
+                {goods: "Automotive Vehicles", value: 27.841},
+                {goods: "Consumer Goods", value: 57.285},
+                {goods: "Other Goods", value: 9.552}]
+                
+  var bardata9_e = [{goods: "Foods, Feeds, & Beverages", value: 12.478},
+                {goods: "Industrial Supplies", value: 39.311},
+                {goods: "Capital Goods", value: 37.646},
+                {goods: "Automotive Vehicles", value: 12.438},
+                {goods: "Consumer Goods", value: 15.184},
+                {goods: "Other Goods", value: 4.673}]
+
+  var bardata9_i = [{goods: "Foods, Feeds, & Beverages", value: 13.397},
+                {goods: "Industrial Supplies", value: 37.052},
+                {goods: "Capital Goods", value: 55.293},
+                {goods: "Automotive Vehicles", value: 31.006},
+                {goods: "Consumer Goods", value: 56.181},
+                {goods: "Other Goods", value: 9.043}]
+
+  var bardata10_e = [{goods: "Foods, Feeds, & Beverages", value: 12.563},
+                {goods: "Industrial Supplies", value: 40.577},
+                {goods: "Capital Goods", value: 38.982},
+                {goods: "Automotive Vehicles", value: 12.605},
+                {goods: "Consumer Goods", value: 16.032},
+                {goods: "Other Goods", value: 4.709}]
+
+  var bardata10_i = [{goods: "Foods, Feeds, & Beverages", value: 13.297},
+                {goods: "Industrial Supplies", value: 38.225},
+                {goods: "Capital Goods", value: 56.771},
+                {goods: "Automotive Vehicles", value: 32.045},
+                {goods: "Consumer Goods", value: 57.523},
+                {goods: "Other Goods", value: 8.752}]
+
+  var bardata11_e = [{goods: "Foods, Feeds, & Beverages", value: 12.750},
+                {goods: "Industrial Supplies", value: 41.380},
+                {goods: "Capital Goods", value: 38.709},
+                {goods: "Automotive Vehicles", value: 12.547},
+                {goods: "Consumer Goods", value: 16.394},
+                {goods: "Other Goods", value: 4.757}]
+                
+  var bardata11_i = [{goods: "Foods, Feeds, & Beverages", value: 13.416},
+                {goods: "Industrial Supplies", value: 39.397},
+                {goods: "Capital Goods", value: 57.838},
+                {goods: "Automotive Vehicles", value: 31.284},
+                {goods: "Consumer Goods", value: 60.548},
+                {goods: "Other Goods", value: 9.456}]
+
+  var bardata12_e = [{goods: "Foods, Feeds, & Beverages", value: 13.609},
+                {goods: "Industrial Supplies", value: 43.004},
+                {goods: "Capital Goods", value: 39.712},
+                {goods: "Automotive Vehicles", value: 13.220},
+                {goods: "Consumer Goods", value: 16.551},
+                {goods: "Other Goods", value: 5.071}]
+                
+  var bardata12_i = [{goods: "Foods, Feeds, & Beverages", value: 13.108},
+                {goods: "Industrial Supplies", value: 41.711},
+                {goods: "Capital Goods", value: 58.328},
+                {goods: "Automotive Vehicles", value: 33.050},
+                {goods: "Consumer Goods", value: 59.360},
+                {goods: "Other Goods", value: 9.468}]
+                
+  var bardata13_e = [{goods: "Foods, Feeds, & Beverages", value: 13.683},
+                {goods: "Industrial Supplies", value: 45.287},
+                {goods: "Capital Goods", value: 41.246},
+                {goods: "Automotive Vehicles", value: 12.641},
+                {goods: "Consumer Goods", value: 16.040},
+                {goods: "Other Goods", value: 5.247}]
+
+  var bardata13_i = [{goods: "Foods, Feeds, & Beverages", value: 13.753},
+                {goods: "Industrial Supplies", value: 42.591},
+                {goods: "Capital Goods", value: 59.703},
+                {goods: "Automotive Vehicles", value: 31.849},
+                {goods: "Consumer Goods", value: 63.196},
+                {goods: "Other Goods", value: 8.605}]
+
+  var bardata14_e = [{goods: "Foods, Feeds, & Beverages", value: 13.454},
+                {goods: "Industrial Supplies", value: 45.624},
+                {goods: "Capital Goods", value: 38.855},
+                {goods: "Automotive Vehicles", value: 11.811},
+                {goods: "Consumer Goods", value: 15.185},
+                {goods: "Other Goods", value: 5.038}]
+
+  var bardata14_i = [{goods: "Foods, Feeds, & Beverages", value: 13.141},
+                {goods: "Industrial Supplies", value: 46.376},
+                {goods: "Capital Goods", value: 59.878},
+                {goods: "Automotive Vehicles", value: 28.185},
+                {goods: "Consumer Goods", value: 61.179},
+                {goods: "Other Goods", value: 9.419}]
+
+  var bardata15_e = [{goods: "Foods, Feeds, & Beverages", value: 13.530},
+                {goods: "Industrial Supplies", value: 51.370},
+                {goods: "Capital Goods", value: 42.176},
+                {goods: "Automotive Vehicles", value: 12.943},
+                {goods: "Consumer Goods", value: 17.228},
+                {goods: "Other Goods", value: 5.893}]
+
+  var bardata15_i = [{goods: "Foods, Feeds, & Beverages", value: 14.073},
+                {goods: "Industrial Supplies", value: 50.509},
+                {goods: "Capital Goods", value: 63.433},
+                {goods: "Automotive Vehicles", value: 30.416},
+                {goods: "Consumer Goods", value: 66.331},
+                {goods: "Other Goods", value: 10.294}]
+                
+  var bardata16_e = [{goods: "Foods, Feeds, & Beverages", value: 13.683},
+                {goods: "Industrial Supplies", value: 52.171},
+                {goods: "Capital Goods", value: 44.238},
+                {goods: "Automotive Vehicles", value: 11.915},
+                {goods: "Consumer Goods", value: 16.977},
+                {goods: "Other Goods", value: 5.588}]
+
+  var bardata16_i = [{goods: "Foods, Feeds, & Beverages", value: 14.544},
+                {goods: "Industrial Supplies", value: 49.684},
+                {goods: "Capital Goods", value: 63.705},
+                {goods: "Automotive Vehicles", value: 29.359},
+                {goods: "Consumer Goods", value: 63.719},
+                {goods: "Other Goods", value: 9.475}]
+
+  var bardata17_e = [{goods: "Foods, Feeds, & Beverages", value: 14.003},
+                {goods: "Industrial Supplies", value: 52.329},
+                {goods: "Capital Goods", value: 43.824},
+                {goods: "Automotive Vehicles", value: 11.369},
+                {goods: "Consumer Goods", value: 17.958},
+                {goods: "Other Goods", value: 5.605}]
+
+  var bardata17_i = [{goods: "Foods, Feeds, & Beverages", value: 15.386},
+                {goods: "Industrial Supplies", value: 52.308},
+                {goods: "Capital Goods", value: 62.577},
+                {goods: "Automotive Vehicles", value: 29.186},
+                {goods: "Consumer Goods", value: 63.992},
+                {goods: "Other Goods", value: 9.746}]
+
+  var bardata18_e = [{goods: "Foods, Feeds, & Beverages", value: 12.759},
+                {goods: "Industrial Supplies", value: 53.507},
+                {goods: "Capital Goods", value: 43.701},
+                {goods: "Automotive Vehicles", value: 11.572},
+                {goods: "Consumer Goods", value: 18.006},
+                {goods: "Other Goods", value: 5.725}]
+
+  var bardata18_i = [{goods: "Foods, Feeds, & Beverages", value: 16.011},
+                {goods: "Industrial Supplies", value: 56.853},
+                {goods: "Capital Goods", value: 63.421},
+                {goods: "Automotive Vehicles", value: 28.484},
+                {goods: "Consumer Goods", value: 62.389},
+                {goods: "Other Goods", value: 10.117}]
+
+  var bardata19_e = [{goods: "Foods, Feeds, & Beverages", value: 12.810},
+                {goods: "Industrial Supplies", value: 53.699},
+                {goods: "Capital Goods", value: 44.697},
+                {goods: "Automotive Vehicles", value: 12.181},
+                {goods: "Consumer Goods", value: 18.809},
+                {goods: "Other Goods", value: 5.740}]
+
+  var bardata19_i = [{goods: "Foods, Feeds, & Beverages", value: 15.933},
+                {goods: "Industrial Supplies", value: 55.285},
+                {goods: "Capital Goods", value: 63.353},
+                {goods: "Automotive Vehicles", value: 29.562},
+                {goods: "Consumer Goods", value: 60.257},
+                {goods: "Other Goods", value: 10.467}]
+  
+  var bardata20_e = [{goods: "Foods, Feeds, & Beverages", value: 12.170},
+                {goods: "Industrial Supplies", value: 57.234},
+                {goods: "Capital Goods", value: 43.868},
+                {goods: "Automotive Vehicles", value: 11.201},
+                {goods: "Consumer Goods", value: 19.104},
+                {goods: "Other Goods", value: 5.533}]
+
+  var bardata20_i = [{goods: "Foods, Feeds, & Beverages", value: 15.695},
+                {goods: "Industrial Supplies", value: 57.091},
+                {goods: "Capital Goods", value: 63.095},
+                {goods: "Automotive Vehicles", value: 28.012},
+                {goods: "Consumer Goods", value: 63.236},
+                {goods: "Other Goods", value: 10.145}]          
+
+  var covid_data = [
+    {month: "2020-Jan",value: 0.011},
+    {month: "2020-Feb",value: 0.078},
+    {month: "2020-Mar",value: 142.936},
+    {month: "2020-Apr",value: 1016.016},
+    {month: "2020-May",value: 632.150},
+    {month: "2020-Jun",value: 758.805},
+    {month: "2020-Jul",value: 2118.959},
+    {month: "2020-Aug",value: 1329.208},
+    {month: "2020-Sep",value: 1117.883},
+    {month: "2020-Oct",value: 2092.316},
+    {month: "2020-Nov",value: 4175.959},
+    {month: "2020-Dec",value: 7256.893},
+    {month: "2021-Jan",value: 6636.861},
+    {month: "2021-Feb",value: 1980.197},
+    {month: "2021-Mar",value: 1717.367},
+    {month: "2021-Apr",value: 2001.668},
+    {month: "2021-May",value: 654.836},
+    {month: "2021-Jun",value: 354.941},
+    {month: "2021-Jul",value: 2047.526},
+    {month: "2021-Aug",value: 4181.044}
+    ]
+    
+    var covid_data2 = [
+      ["2020-Jan",0.011],
+      ["2020-Feb",0.078],
+      ["2020-Mar",142.936],
+      ["2020-Apr",1016.016],
+      ["2020-May",632.150],
+      ["2020-Jun",758.805],
+      ["2020-Jul",2118.959],
+      ["2020-Aug",1329.208],
+      ["2020-Sep",1117.883],
+      ["2020-Oct",2092.316],
+      ["2020-Nov",4175.959],
+      ["2020-Dec",7256.893],
+      ["2021-Jan",6636.861],
+      ["2021-Feb",1980.197],
+      ["2021-Mar",1717.367],
+      ["2021-Apr",2001.668],
+      ["2021-May",654.836],
+      ["2021-Jun",354.941],
+      ["2021-Jul",2047.526],
+      ["2021-Aug",4181.044]
+      ]
+
+  // Axes for the bar chart
+  var xScale = d3.scaleBand()
+      .domain(bardata_e.map(d => d.goods))
+      .range([0, innerWidth])
+      .paddingInner(.1);
+
+  var yScale = d3.scaleLinear()
+      .domain([0, 65])
+      .range([innerHeight, 0])
+
+  var xAxis = d3.axisBottom()
+      .scale(xScale);
+
+  var yAxis = d3.axisLeft()
+      .scale(yScale);
+      
+  // Axes for the line chart
+  var xScale2 = d3.scaleBand()
+      .domain(covid_data.map(d => d.month))
+      .range([0, innerWidth])
+      .paddingInner(.1);
+
+  var yScale2 = d3.scaleLinear()
+      .domain([0, 8000])
+      .range([innerHeight, 0])
+
+  var xAxis2 = d3.axisBottom()
+      .scale(xScale2);
+
+  var yAxis2 = d3.axisLeft()
+      .scale(yScale2);
+  
+  // attributes of the line charts
+  
+  var line = d3.line()
+      .x(function(d) { return xScale2(d[0]); }) 
+      .y(function(d) { return yScale2(d[1]); }) 
+      .curve(d3.curveMonotoneX)
+
+// add svg
+
+  var svg = d3.select("body")
+    .append("svg")
+      .attr("width", w)
+      .attr("height", h);
+
+// add background rectangle
+
+  svg.append("rect")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", w)
+      .attr("height", h)
+      .attr("fill", "ghostwhite");
+
+// add bars as a group
+
+      
+  svg.selectAll(".bar")
+    .data(bardata_e)
+    .enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", d => xScale(d.goods)+70)
+    .attr("y", d => yScale(d.value)+50)
+    .attr("width", 40)
+    .attr("height", d => innerHeight - yScale(d.value))
+    .attr("fill", "navy");
+    
+  svg.selectAll(".bar2")
+    .data(bardata_i)
+    .enter().append("rect")
+    .attr("class", "bar2")
+    .attr("x", d => xScale(d.goods)+110)
+    .attr("y", d => yScale(d.value)+50)
+    .attr("width", 40)
+    .attr("height", d => innerHeight - yScale(d.value))
+    .attr("fill", "firebrick");
+
+// add axes to the bar chart
+
+  svg.append("g")
+      .attr("class", "xAxis")
+      .attr("transform", `translate (${60}, ${350})`)
+      .style('font-family', '"Times New Roman", Georgia, serif')
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "yAxis")
+      .attr("transform", `translate (${60}, ${50})`)
+      .style('font-family', '"Times New Roman", Georgia, serif')
+      .call(yAxis);
+      
+// add axes to the line chart
+  
+  svg.append("g")
+      .attr("class", "xAxis")
+      .attr("transform", `translate (${60}, ${730})`)
+      .call(xAxis2)
+      .selectAll("text")
+        .style("text-anchor", "start")
+        .attr("y", 0)
+        .attr("x", 9)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(65)")
+        .style('font-family', '"Times New Roman", Georgia, serif');
+
+  svg.append("g")
+      .attr("class", "yAxis")
+      .attr("transform", `translate (${60}, ${430})`)
+      .style('font-family', '"Times New Roman", Georgia, serif')
+      .call(yAxis2);
+
+  
+  svg.append("path")
+      .datum(covid_data2) 
+      .attr("class", "line") 
+      .attr("transform", `translate(${75}, ${430})`)
+      .attr("d", line)
+      .style("fill", "none")
+      .style("stroke", "indianred")
+      .style("stroke-width", "3");
+
+  // ************* 2020 Jan *************
+  svg.append('rect')
+    .attr('x', 61)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata1_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata1_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    
+    // ************* 2020 Feb *************
+    svg.append('rect')
+    .attr('x', 92)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata2_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata2_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    
+    // ************* 2020 Mar *************
+    svg.append('rect')
+    .attr('x', 125)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata3_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata3_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+
+    // ************* 2020 Apr *************
+    svg.append('rect')
+    .attr('x', 157)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata4_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata4_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    }) 
+    
+    // ************* 2020 May *************
+    svg.append('rect')
+    .attr('x', 190)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata5_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata5_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    }) 
+    
+    // ************* 2020 Jun *************
+    svg.append('rect')
+    .attr('x', 222)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata6_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata6_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    }) 
+    
+    // ************* 2020 Jul *************
+    svg.append('rect')
+    .attr('x', 254)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata7_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata7_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    }) 
+    
+    // ************* 2020 Aug *************
+    svg.append('rect')
+    .attr('x', 287)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata8_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata8_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    }) 
+
+    // ************* 2020 Sep *************
+    svg.append('rect')
+    .attr('x', 320)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata9_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata9_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    }) 
+
+    // ************* 2020 Oct *************
+    svg.append('rect')
+    .attr('x', 353)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata10_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata10_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })    
+    
+    // ************* 2020 Nov *************
+    svg.append('rect')
+    .attr('x', 385)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata11_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata11_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })    
+
+    // ************* 2020 Dec *************
+    svg.append('rect')
+    .attr('x', 418)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata12_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata12_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })  
+    
+    // ************* 2021 Jan *************
+    svg.append('rect')
+    .attr('x', 451)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata13_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata13_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })  
+    
+    // ************* 2021 Feb *************
+    svg.append('rect')
+    .attr('x', 484)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata14_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata14_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })  
+
+    // ************* 2021 Mar *************
+    svg.append('rect')
+    .attr('x', 517)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata15_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata15_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })  
+    
+    // ************* 2021 Apr *************
+    svg.append('rect')
+    .attr('x', 550)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata16_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata16_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    
+    // ************* 2021 May *************
+    svg.append('rect')
+    .attr('x', 581)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata17_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata17_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })    
+
+    
+    // ************* 2021 Jun *************
+    svg.append('rect')
+    .attr('x', 613)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata18_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata18_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+
+    // ************* 2021 Jul *************
+    svg.append('rect')
+    .attr('x', 647)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata19_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata19_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    }) 
+    
+    // ************* 2021 Aug *************
+    svg.append('rect')
+    .attr('x', 680)
+    .attr('y', 429)
+    .attr('width', 30)
+    .attr('height', 300)
+    .attr('stroke', 'none')
+    .attr('fill', 'darkgrey')
+    .attr('opacity', 0)
+    .on("mouseout", function(d) {
+      d3.select(this)
+      .style('opacity', 0)
+      
+      d3.selectAll(".bar")
+        .data(bardata_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    })
+    .on("mouseover", function(d) {
+      d3.select(this)
+      .style('opacity', 0.5)
+      d3.selectAll(".bar")
+        .data(bardata20_e)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+70)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "navy")
+        
+      d3.selectAll(".bar2")
+        .data(bardata20_i)
+        .transition().duration(1000)
+        .attr("x", d => xScale(d.goods)+110)
+        .attr("y", d => yScale(d.value)+50)
+        .attr("height", d => innerHeight - yScale(d.value))
+        .attr("fill", "firebrick")
+    }) 
+
+    svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("y", 20)
+    .attr("x", -90)
+    .attr("dy", ".75em")
+    .style("font-size", "12px")
+    .style('font-family', '"Times New Roman", Georgia, serif')
+    .attr("transform", "rotate(-90)")
+    .text("Import & Export Amount (in Billions of Dollars)");
+    
+    svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("y", 13)
+    .attr("x", -480)
+    .attr("dy", ".75em")
+    .style("font-size", "12px")
+    .style('font-family', '"Times New Roman", Georgia, serif')
+    .attr("transform", "rotate(-90)")
+    .text("COVID-19 Cases (in Thousands)");
+
+    svg.append("text")
+    .attr("x", 80)
+    .attr("y", 30)
+    .attr("font-weight", 700).style('font-family', '"Times New Roman", Georgia, serif')
+    .text("The Import and Export Amount of Goods from Each Category")
+    .style("font-size", "23px")
+    .style('font-family', '"Times New Roman", Georgia, serif')
+    
+    svg.append("text")
+    .attr("x", 150)
+    .attr("y", 410)
+    .attr("font-weight", 700)
+    .text("The Monthly Detected COVID-19 Cases in the US")
+    .style("font-size", "23px")
+    .style('font-family', '"Times New Roman", Georgia, serif')
+
+    svg.append('rect')
+    .attr('x', 670)
+    .attr('y', 105)
+    .attr('width', 20)
+    .attr('height', 20)
+    .attr('stroke', 'black')
+    .attr('fill', 'navy')
+    
+    svg.append("text")
+    .attr("x", 695)
+    .attr("y", 120)
+    .text("Export")
+    .style("font-size", "12px")
+    .style('font-family', '"Times New Roman", Georgia, serif')
+    
+    
+    svg.append('rect')
+    .attr('x', 670)
+    .attr('y', 145)
+    .attr('width', 20)
+    .attr('height', 20)
+    .attr('stroke', 'black')
+    .attr('fill', 'firebrick')
+    
+    svg.append("text")
+    .attr("x", 695)
+    .attr("y", 160)
+    .text("Import")
+    .style("font-size", "12px")
+    .style('font-family', '"Times New Roman", Georgia, serif')
+    
+    
+    </script>
+
+  </body>
+
+</html>
