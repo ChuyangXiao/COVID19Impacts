@@ -23,8 +23,7 @@ library(grid)
 
 ## Section 1: From which Extent was the International Trade of the US Affected During Pre- and Post-COVID period?
 
-### Export in goods plunges with quick recovery
-###### Graph 1
+### Graph 1: Export in goods plunges with quick recovery
 
 ```{r}
 
@@ -136,8 +135,7 @@ To summarize, comparing the import and export of the goods and services, we foun
 
 Such phenomenon could be accounted from multiple viewpoints. As the trades in services basically depend on labor-sparse jobs, including financial services, intellectual property, telecommunications, information services etc., the pandemic was barely capable of immediately paralyzing the major producers of these services. By contrast, since the production and transportation of the goods may require intense labor, the massive outburst of COVID-19 may seriously jeopardize their source of human labor. Thus, the trading in goods were more affected during this period. On the other hand, compared with exportation, the importation of goods and services basically came from international markets or foreign producers, which were commonly multiple-sourced as well as hard-wired, and therefore were comparatively stable and robust. 
 
-### No significant shift in product end-use
-###### Graph 2
+### Graph 2: No significant shift in product end-use
 
 ```{r}
 
@@ -312,9 +310,7 @@ Hence, regarding the two box plots above, we could roughly conclude that:
 - Compared with those in 2020, the imports and exports of each category of good experience an elevation in the total trading amount in 2021, which shall be considered a harbinger of recover.
 
 
-### Food stays stable while manufacturing industry is hit
-###### Graph 3
-
+### Graph 3: Food stays stable while manufacturing industry is hit
 
 ```{r}
 temp_goods_cat = read_excel("ft900xlsx/exh6.xlsx",skip = 5)
@@ -479,8 +475,7 @@ Hence, from this graph, we could summarize that:
 We believe that the observation `Foods, Feeds, & Beverages` is relatively stable could be explained from two aspects: Firstly, the food category counts as life necessity, meaning the demand elasticity is high. Firms usually won’t stop the production for these goods and even if they are forced to do so in extreme situations, the government might step in and provide support or enforcement to ensure stability. Second, the production of most agricultural and food products is highly automated in the US, which means it doesn’t require lots of labor, and thus would not be affected by Covid as much.
 
 
-### Spot the close trading partners of US
-###### Graph 4
+### Graph 4: Spot the close trading partners of US
 
 ```{r}
 
@@ -660,8 +655,7 @@ From these graphs, we could conclude:
 - North American trading partners are high in both export and import amount. Eastern Asian states generally have relatively lower export amount yet higher import amount.
 
 
-### The hit of Covid is real especially on close trading partners
-###### Graph 5
+### Graph 5: The hit of Covid is real especially on close trading partners
 
 ```{r}
 
@@ -838,8 +832,7 @@ Hence, we could conclude that:
 
 
 ## Section 2: Could the spread of COVID19 account for such changes?
-### Severity of Covid among close partners: Is it the major killer?
-###### Graph 6
+### Graph 6: Severity of Covid among close partners: Is it the major killer?
 
 ```{r}
 
@@ -1003,8 +996,7 @@ Now we’ve established close trading partners with US and identified the partne
 However, a more counter-intuitive observation is that countries with very high death rate such as UK and Germany are not the ones that experience the largest decrease in trading values from what we can tell in the annual plot in Graph 5. While countries with the most significant drop, such as Canada and China, don’t appear to be the most severe ones in this death counts plot. This could be due to a variety of reasons: for instance, the base trading amount is different, so a multiplying factor on the base could have effect to a different extent; the population and production mode is different, which lead to a varying response effectiveness under the Covid; and various other confounding variables such as exchange rate might also account for this reverse relationship.
 
 
-### Surprise is what shock the economy the most
-###### Graph 7
+### Graph 7: Surprise is what shock the economy the most
 
 ```{r}
 
@@ -1108,7 +1100,7 @@ Thus, we may conclude:
 Such phenomenon may be explained from various aspects. While the COVID-19 first hit the US in early 2020, people are fully surprised and no one, both individuals and firms, are prepared for this. It provoked huge panic among the population, caused interruptions in production, and disrupted the normal supply chain and logistics. Although there is another wave of huge rise in Covid cases at the end of 2020, we can see for this time, the dent on the bar charts is much smaller compared with the previous hit. Since people are now better prepared for this situation, and plenty of measures to cope with this circumstance has emerged, it’s reasonable that the hit is no longer as impactful as before. Indeed, this fact for unexpectedness also applies to many other aspects of the economy as well, especially in the financial market.
 
 
-###### Graph 8
+### Graph 8: Differnt Spreading Pattern of COVID-19 yet Same Trading Declination? 
 
 ```{r}
 
@@ -1275,8 +1267,7 @@ Therefore, we may conclude that:
 
 
 
-###### Graph 9
-
+### Graph 9: The COVID-19 Condition VS. Trading Partnership
 
 ```{r}
 
