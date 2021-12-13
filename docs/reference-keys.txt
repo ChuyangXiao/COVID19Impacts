@@ -36,7 +36,7 @@ the-interactive-graph
 description
 instructions-for-using-the-interactive-graph
 conclusion
-conducted-conclusion
-observed-obstacles
+short-summary
+limitations
 further-focuses
 learnt-lessons

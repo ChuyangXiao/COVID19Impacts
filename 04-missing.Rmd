@@ -13,6 +13,7 @@ library(dplyr)
 
 ```
 
+In order to detect the missing values within the dataset we selected, we firstly compare the number of rows within each dataset and the complete rows (rows without missing values or invalid values) within it. 
 
 
 ```{r}
@@ -584,5 +585,4 @@ ggplot(miss_new[27:44,], aes(fill=`count type`, y=value, x=dataset)) +
     geom_text(aes(label=value),position=position_dodge(0.9),hjust=-0.2)
 ```
 
-
-From this extent, according to the graphs we created above, we could easily concluded that in all data we selected in this assignment are complete without any missing value, as they are all collected from government-operating websites that guarantee comprehensiveness as well as validity. In addition, we do not need to further fulfill the missing values within them via predicted values.
+According to the graphs we created above, we find that for every dataset we select, there total number of rows matches the number of complete rows. Hence, we could easily concluded that in all data we selected in this assignment are complete without any missing value, as they are all collected from government-operating websites that guarantee comprehensiveness as well as validity. In addition, we do not need to further fulfill the missing values within them via predicted values.

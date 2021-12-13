@@ -1,6 +1,6 @@
 # Conclusion
 
-## Conducted Conclusion
+## Short Summary
 
 Consistent with all graphs and comments above, we could now answer the questions we raised at the beginning of this project.
 
@@ -10,7 +10,7 @@ However, simply the spread of COVID-19 could not fully explain the changing patt
 
 In conclusion, the international trade of the US indeed suffered a severe plunge at the beginning of the COVID epoch, yet it may be too arbitrary to exclusively attribute the US’ loss in international trade and the recent shortage in goods to simply the global spread of COVID-19. On the other hand, by our prediction, the global panic induced by this unexpected virus as well as the following trading blocks, traveling prohibition, as well as negative public cries shall play more significant roles during this historical event.
 
-## Observed Obstacles
+## Limitations
 
 Nevertheless, we additionally found that our exploration in this research question somehow limited from the following perspectives:
 
