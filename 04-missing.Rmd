@@ -14,6 +14,7 @@ library(dplyr)
 ```
 
 
+
 ```{r}
 
 covid_raw_data = read.csv(file = 'COVID-19data/dataset 2/data.csv')
@@ -548,7 +549,7 @@ miss[nrow(miss) + 1,] = c('countries_quarters_svs_imp', 'exh20b', nrow(countries
 
 
 ```{r, fig.height = 6, fig.width = 8}
-miss_new = miss %>% pivot_longer(cols=c(3,4),names_to = "count type")
+miss_new = miss %>% pivot_longer(cols=c(3,4),names_to = "count type") %>% mutate(value=as.numeric(value)) 
 
 
 library(viridis)
@@ -556,26 +557,32 @@ library(viridis)
 ggplot(miss_new[1:8,], aes(fill=`count type`, y=value, x=dataset)) + 
     geom_bar(position="dodge", stat="identity") +
     ggtitle("Missing Pattern for Covid Data") +
-    # theme(legend.position="none") +
     xlab("") +
     coord_flip() +
-    guides(fill = guide_legend(reverse = TRUE))
+    guides(fill = guide_legend(reverse = TRUE)) +
+    ylim(c(0,300)) +
+    geom_text(aes(label=value),position=position_dodge(0.9),hjust=-0.2)
+    
 
 ggplot(miss_new[9:26,], aes(fill=`count type`, y=value, x=dataset)) + 
     geom_bar(position="dodge", stat="identity") +
     ggtitle("Missing Pattern for BOP Data (Trade)") +
-    # theme(legend.position="none") +
     xlab("") +
     coord_flip() +
-    guides(fill = guide_legend(reverse = TRUE))
+    guides(fill = guide_legend(reverse = TRUE)) +
+    ylim(c(0,200)) +
+    geom_text(aes(label=value),position=position_dodge(0.9),hjust=-0.2)
+    
 
 ggplot(miss_new[27:44,], aes(fill=`count type`, y=value, x=dataset)) + 
     geom_bar(position="dodge", stat="identity") +
     ggtitle("Missing Pattern for BOP Data (Countries and Areas)") +
-    # theme(legend.position="none") +
     xlab("") +
     coord_flip() +
-    guides(fill = guide_legend(reverse = TRUE))
+    guides(fill = guide_legend(reverse = TRUE)) +
+    ylim(c(0,40)) +
+    geom_text(aes(label=value),position=position_dodge(0.9),hjust=-0.2)
 ```
+
 
 Therefore, according to the graphs we created above, we could easily concluded that in all data we selected in this assignment are complete without any missing value, as they are all collected from government-operating websites that guarantee comprehensiveness as well as validity. In addition, we do not need to further fulfill the missing values within them via predicted values.
