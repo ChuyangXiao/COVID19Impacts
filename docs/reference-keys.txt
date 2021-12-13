@@ -5,3 +5,8 @@ missing-values
 results
 interactive-component
 conclusion
+covid-data
+bop-data
+exhibit-1---u.s.-international-trade-in-goods-and-services
+exhibit-8---u.s.-imports-by-end-use-category-and-commodity
+exhibit-7---u.s.-exports-of-goods-by-end-use-category-and-commodity
