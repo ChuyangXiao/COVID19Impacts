@@ -585,4 +585,4 @@ ggplot(miss_new[27:44,], aes(fill=`count type`, y=value, x=dataset)) +
 ```
 
 
-Therefore, according to the graphs we created above, we could easily concluded that in all data we selected in this assignment are complete without any missing value, as they are all collected from government-operating websites that guarantee comprehensiveness as well as validity. In addition, we do not need to further fulfill the missing values within them via predicted values.
+From this extent, according to the graphs we created above, we could easily concluded that in all data we selected in this assignment are complete without any missing value, as they are all collected from government-operating websites that guarantee comprehensiveness as well as validity. In addition, we do not need to further fulfill the missing values within them via predicted values.
