@@ -9,3 +9,9 @@ tab:unnamed-chunk-3
 covid-19-data-from-european-center-for-disease-prevention-and-control
 international-trade-data-from-united-states-census-bureau
 comments-and-issues
+covid-data
+bop-data
+exhibit-1---u.s.-international-trade-in-goods-and-services
+exhibit-8---u.s.-imports-by-end-use-category-and-commodity
+exhibit-7---u.s.-exports-of-goods-by-end-use-category-and-commodity
+
