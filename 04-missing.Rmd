@@ -1,4 +1,581 @@
 # Missing values
 
 
-Regarding the missing values in the raw data, we could make following changes, for instance...
+```{r}
+
+library(readxl)
+library(tidyverse)
+library(ggpubr)
+library(ggridges)
+library(gapminder)
+library(forcats)
+library(dplyr)
+
+```
+
+
+```{r}
+
+covid_raw_data = read.csv(file = 'COVID-19data/dataset 2/data.csv')
+
+covid_weekly_case = covid_raw_data[covid_raw_data$indicator == 'cases',]
+covid_weekly_death = covid_raw_data[covid_raw_data$indicator == 'deaths',]
+
+tidy_covid_weekly_func <- function(covid_weekly,mode){
+  if (mode == "cum"){
+    id_var = "cumulative_count"
+    }
+  else{id_var = "weekly_count"
+    }
+
+  tidy_weekly = pivot_wider(covid_weekly[,c("country", 
+                                            "country_code", 
+                                            "continent", 
+                                            id_var,
+                                            "year_week")], 
+                            names_from = year_week, 
+                            values_from = id_var,
+                            values_fill = 0)
+  
+  tidy_weekly = tidy_weekly[order(tidy_weekly$continent,
+                                  tidy_weekly$country),]
+  
+  return(tidy_weekly)
+}
+
+tidy_case_cum = tidy_covid_weekly_func(covid_weekly_case,"cum")
+tidy_case_count = tidy_covid_weekly_func(covid_weekly_case,"count")
+
+tidy_death_cum = tidy_covid_weekly_func(covid_weekly_death,"cum")
+tidy_death_count = tidy_covid_weekly_func(covid_weekly_death,"count")
+
+# The four datasets above are final outputs
+```
+
+```{r}
+col_names = colnames(tidy_case_count)
+
+for (i in 4: length(col_names)){
+  date_ls = str_split(col_names[i], "-")
+  year = as.numeric(date_ls[[1]][1])
+  week = as.numeric(date_ls[[1]][2])-1
+  new_date = as.Date(paste(year, week, "4", sep="-"), "%Y-%U-%u")
+  col_names[i] = as.character(new_date)
+}
+
+colnames(tidy_case_count) = col_names
+colnames(tidy_death_count) = col_names
+
+colnames(tidy_case_cum) = col_names
+colnames(tidy_death_cum) = col_names
+
+```
+
+
+```{r}
+miss = data.frame(dataset='tidy_case_count', source='covid', num_rows=nrow(tidy_case_count), complete_cases=sum(complete.cases(tidy_case_count)))
+miss[nrow(miss) + 1,] = c('tidy_death_count', 'covid', nrow(tidy_death_count), sum(complete.cases(tidy_death_count)))
+miss[nrow(miss) + 1,] = data.frame(dataset='tidy_case_cum', source='covid', num_rows=nrow(tidy_case_cum), complete_cases=sum(complete.cases(tidy_case_cum)))
+miss[nrow(miss) + 1,] = c('tidy_death_cum', 'covid', nrow(tidy_death_cum), sum(complete.cases(tidy_death_cum)))
+```
+
+
+
+```{r}
+
+# Load in the data with the first three lines skipped
+int_trade_1 = read_excel("ft900xlsx/exh1.xlsx",skip = 4)
+
+col_names = colnames(int_trade_1)
+
+col_names_sub = int_trade_1[1,]
+
+# Combine the first two lines to get new column names
+for (i in 2:length(col_names)){
+  if (col_names[i] %in% c("Balance", "Exports", "Imports")){
+    prefix = col_names[i]
+  }
+  col_names[i] = paste(prefix, int_trade_1[1,][i])
+}
+colnames(int_trade_1) = col_names
+
+# Removed the useless rows
+int_trade_1 = int_trade_1[-c(1,46,47,48,49,50), ]
+
+row_names = int_trade_1$Period
+
+for (i in 1:length(row_names)){
+  if (row_names[i] %in% c("2019", "2020", "2021")){
+    prefix = row_names[i]
+  }
+  row_names[i] = paste(prefix,"-",row_names[i])
+}
+
+# Remove the rows with na
+int_trade_1$Period = row_names
+int_trade_1 = int_trade_1 %>%
+  filter(complete.cases(.))
+
+# Final outcome is int_trade_1
+
+miss[nrow(miss) + 1,] = c('int_trade_1', 'exh1', nrow(int_trade_1), sum(complete.cases(int_trade_1)))
+```
+
+
+```{r}
+
+imp_trade_cat = read_excel("ft900xlsx/exh8.xlsx",
+                           skip = 5)                  # remove the title and subtitles
+
+col_names = colnames(imp_trade_cat)
+
+col_subnames = imp_trade_cat[1,]
+
+for (i in 2:length(col_names)){
+  col_name = col_names[i]
+  # Remove the suffix
+  if (substr(col_name, 1, 4) =="Year"){
+    col_name = "Year-to-Date"
+  }
+  col_names[i] = paste(col_name,
+                    col_subnames[i])
+}
+
+# Set the new row names
+colnames(imp_trade_cat) = col_names
+
+imp_trade_cat = imp_trade_cat %>%
+  filter(complete.cases(.))
+
+imp_trade_cat = imp_trade_cat[!(imp_trade_cat$`Item (1)` =="Total, Balance of Payments Basis"|
+                                  imp_trade_cat$`Item (1)` =="Net Adjustments"|
+                                  imp_trade_cat$`Item (1)` =="Total, Census Basis"),]
+
+imp_trade_tot = imp_trade_cat[(imp_trade_cat$`Item (1)` =="Foods, feeds, and beverages"|
+                                 imp_trade_cat$`Item (1)` =="Industrial supplies and materials"|
+                                 imp_trade_cat$`Item (1)` =="Capital goods, except automotive"|
+                                 imp_trade_cat$`Item (1)` =="Automotive vehicles, parts, and engines"|
+                                 imp_trade_cat$`Item (1)` =="Consumer goods"|
+                                 imp_trade_cat$`Item (1)` =="Other goods"),]
+
+cat_list = rep(NA, length(imp_trade_cat$`Item (1)`))
+
+for (i in 1:length(imp_trade_cat$`Item (1)`)){
+  if (imp_trade_cat$`Item (1)`[i] =="Foods, feeds, and beverages"|
+      imp_trade_cat$`Item (1)`[i] =="Industrial supplies and materials"|
+      imp_trade_cat$`Item (1)`[i] =="Capital goods, except automotive"|
+      imp_trade_cat$`Item (1)`[i] =="Automotive vehicles, parts, and engines"|
+      imp_trade_cat$`Item (1)`[i] =="Consumer goods"|
+      imp_trade_cat$`Item (1)`[i] =="Other goods"){
+        prefix = imp_trade_cat$`Item (1)`[i]
+      }
+  else{
+    cat_list[i] = prefix
+  }
+}
+
+imp_trade_cat$Category = cat_list
+
+imp_trade_cat = imp_trade_cat %>%
+  filter(complete.cases(.))
+
+# The output datasets in this section are imp_trade_cat and imp_trade_tot
+
+miss[nrow(miss) + 1,] = c('imp_trade_cat', 'exh8', nrow(imp_trade_cat), sum(complete.cases(imp_trade_cat)))
+miss[nrow(miss) + 1,] = c('imp_trade_tot', 'exh8', nrow(imp_trade_tot), sum(complete.cases(imp_trade_tot)))
+```
+
+
+
+```{r}
+
+exp_trade_cat = read_excel("ft900xlsx/exh7.xlsx",
+                           skip = 5)                  # remove the title and subtitles
+
+col_names = colnames(exp_trade_cat)
+
+col_subnames = exp_trade_cat[1,]
+
+for (i in 2:length(col_names)){
+  col_name = col_names[i]
+  # Remove the suffix
+  if (substr(col_name, 1, 4) =="Year"){
+    col_name = "Year-to-Date"
+  }
+  col_names[i] = paste(col_name,
+                    col_subnames[i])
+}
+
+# Set the new row names
+colnames(exp_trade_cat) = col_names
+
+exp_trade_cat = exp_trade_cat %>%
+  filter(complete.cases(.))
+
+exp_trade_cat = exp_trade_cat[!(exp_trade_cat$`Item (1)` =="Total, Balance of Payments Basis"|
+                                  exp_trade_cat$`Item (1)` =="Net Adjustments"|
+                                  exp_trade_cat$`Item (1)` =="Total, Census Basis"),]
+
+exp_trade_tot = exp_trade_cat[(exp_trade_cat$`Item (1)` =="Foods, feeds, and beverages"|
+                                 exp_trade_cat$`Item (1)` =="Industrial supplies and materials"|
+                                 exp_trade_cat$`Item (1)` =="Capital goods, except automotive"|
+                                 exp_trade_cat$`Item (1)` =="Automotive vehicles, parts, and engines"|
+                                 exp_trade_cat$`Item (1)` =="Consumer goods"|
+                                 exp_trade_cat$`Item (1)` =="Other goods"),]
+
+cat_list = rep(NA, length(exp_trade_cat$`Item (1)`))
+
+for (i in 1:length(exp_trade_cat$`Item (1)`)){
+  if (exp_trade_cat$`Item (1)`[i] =="Foods, feeds, and beverages"|
+      exp_trade_cat$`Item (1)`[i] =="Industrial supplies and materials"|
+      exp_trade_cat$`Item (1)`[i] =="Capital goods, except automotive"|
+      exp_trade_cat$`Item (1)`[i] =="Automotive vehicles, parts, and engines"|
+      exp_trade_cat$`Item (1)`[i] =="Consumer goods"|
+      exp_trade_cat$`Item (1)`[i] =="Other goods"){
+        prefix = exp_trade_cat$`Item (1)`[i]
+      }
+  else{
+    cat_list[i] = prefix
+  }
+}
+
+exp_trade_cat$Category = cat_list
+
+exp_trade_cat = exp_trade_cat %>%
+  filter(complete.cases(.))
+
+# The output datasets in this section are exp_trade_cat and exp_trade_tot
+
+miss[nrow(miss) + 1,] = c('exp_trade_cat', 'exh7', nrow(exp_trade_cat), sum(complete.cases(exp_trade_cat)))
+miss[nrow(miss) + 1,] = c('exp_trade_tot', 'exh7', nrow(exp_trade_tot), sum(complete.cases(exp_trade_tot)))
+
+```
+
+
+
+```{r}
+
+# Load in the data with the first three lines skipped
+us_trade_good = read_excel("ft900xlsx/exh12.xlsx",skip = 4)
+
+col_names = colnames(us_trade_good)
+
+col_names_sub = us_trade_good[1,]
+
+# Combine the first two lines to get new column names
+for (i in 2:length(col_names)){
+  if (col_names[i] %in% c("Balance", "Exports", "Imports")){
+    prefix = col_names[i]
+  }
+  col_names[i] = paste(prefix, "-",us_trade_good[1,][i])
+}
+colnames(us_trade_good) = col_names
+
+# Removed the useless rows
+us_trade_good = us_trade_good[-c(1,46,47,48,49,50), ]
+
+row_names = us_trade_good$Period
+
+for (i in 1:length(row_names)){
+  if (row_names[i] %in% c("2019", "2020", "2021")){
+    prefix = row_names[i]
+  }
+  row_names[i] = paste(prefix,"-",row_names[i])
+}
+
+# Remove the rows with na
+us_trade_good$Period = row_names
+us_trade_good = us_trade_good %>%
+  filter(complete.cases(.))
+
+# The output dataset is us_trade_good
+
+miss[nrow(miss) + 1,] = c('us_trade_good', 'exh12', nrow(us_trade_good), sum(complete.cases(us_trade_good)))
+```
+
+
+
+```{r}
+
+# Load in the data with the first three lines skipped
+us_trade_pic = read_excel("ft900xlsx/exh13.xlsx",skip = 5)
+
+col_names = colnames(us_trade_pic)
+
+col_subnames = c("Period",
+                 "Total Balance of Payments Basis", 
+                 "Net  Adjustments", 
+                 "Total Census Basis")
+
+for (i in 1:4){
+  col_names[i] = col_subnames[i]
+}
+
+colnames(us_trade_pic) = col_names
+
+div = which(us_trade_pic$`Total Balance of Payments Basis` == "Exports"|
+              us_trade_pic$`Total Balance of Payments Basis` == "Imports")
+
+us_trade_pic_export = us_trade_pic[(div[1]+1):(div[2]-1), ]
+us_trade_pic_import = us_trade_pic[(div[2]+1):length(us_trade_pic$Period), ] 
+
+row_names = us_trade_pic_export$Period
+
+for (i in 1:length(row_names)){
+  if (row_names[i] %in% c("2019", "2020", "2021")){
+    prefix = row_names[i]
+  }
+  row_names[i] = paste(prefix,"-",row_names[i])
+}
+
+us_trade_pic_export$Period = row_names
+
+# Remove the rows with na
+us_trade_pic_export = us_trade_pic_export %>%
+  filter(complete.cases(.))
+
+row_names = us_trade_pic_import$Period
+
+for (i in 1:length(row_names)){
+  if (row_names[i] %in% c("2019", "2020", "2021")){
+    prefix = row_names[i]
+  }
+  row_names[i] = paste(prefix,"-",row_names[i])
+}
+
+us_trade_pic_import$Period = row_names
+
+us_trade_pic_import = us_trade_pic_import %>%
+  filter(complete.cases(.))
+
+
+miss[nrow(miss) + 1,] = c('us_trade_pic_import', 'exh13', nrow(us_trade_pic_import), sum(complete.cases(us_trade_pic_import)))
+```
+
+
+```{r}
+
+trade_countries_2021 = read_excel("ft900xlsx/exh14.xlsx",skip = 5)
+
+trade_countries_2021[trade_countries_2021 == "(R)"] = NA
+
+# Remove the useless rows
+trade_countries_2021 = trade_countries_2021[1:(which(trade_countries_2021$`Item (1)` == "Unidentified Countries (2)")-1), ]
+
+col_subnames = trade_countries_2021[1,]
+col_subnames = col_subnames[!is.na(col_subnames)]
+
+trade_countries_2021 = trade_countries_2021[ , colSums(is.na(trade_countries_2021)) <= 1]
+
+trade_countries_2021 = trade_countries_2021 %>%
+  filter(complete.cases(.))
+
+col_names = colnames(trade_countries_2021)
+
+for (i in 2:length(col_names)){
+  if (col_names[i] %in% c("Balance", "Exports", "Imports")){
+    prefix = col_names[i]
+  }
+  col_names[i] = paste(prefix, col_subnames[i-1])
+}
+
+colnames(trade_countries_2021) = col_names
+
+trade_countries_2021 = trade_countries_2021[!(
+  trade_countries_2021$`Item (1)` =="Total Balance of Payments Basis"|
+    trade_countries_2021$`Item (1)` =="Net Adjustments"|
+    trade_countries_2021$`Item (1)` =="Total Census Basis"),]
+
+cont_list = rep(NA, length(trade_countries_2021$`Item (1)`))
+
+for (i in 1:length(trade_countries_2021$`Item (1)`)){
+  if (trade_countries_2021$`Item (1)`[i] == "North America"|
+      trade_countries_2021$`Item (1)`[i] == "Europe"|
+      trade_countries_2021$`Item (1)`[i] == "Pacific Rim Countries"|
+      trade_countries_2021$`Item (1)`[i] == "South/Central America"|
+      trade_countries_2021$`Item (1)`[i] == "Africa"|
+      trade_countries_2021$`Item (1)`[i] == "Other Countries"
+      ){
+        prefix = trade_countries_2021$`Item (1)`[i]
+      }
+  else{
+    cont_list[i] = prefix
+  }
+}
+
+trade_countries_2021$Continent = cont_list
+
+trade_countries_2021 = trade_countries_2021 %>%
+  filter(complete.cases(.))
+
+miss[nrow(miss) + 1,] = c('trade_countries_2021', 'exh14', nrow(trade_countries_2021), sum(complete.cases(trade_countries_2021)))
+```
+
+```{r}
+
+trade_countries_2020 = read_excel("ft900xlsx/exh14a.xlsx",skip = 5)
+
+trade_countries_2020[trade_countries_2020 == "(R)"] = NA
+
+# Remove the useless rows
+trade_countries_2020 = trade_countries_2020[1:(which(trade_countries_2020$`Item (1)` == "Unidentified Countries (2)")-1), ]
+
+col_subnames = trade_countries_2020[1,]
+col_subnames = col_subnames[!is.na(col_subnames)]
+
+trade_countries_2020 = trade_countries_2020[ , colSums(is.na(trade_countries_2020)) <= 1]
+
+trade_countries_2020 = trade_countries_2020 %>%
+  filter(complete.cases(.))
+
+col_names = colnames(trade_countries_2020)
+
+for (i in 2:length(col_names)){
+  if (col_names[i] %in% c("Balance", "Exports", "Imports")){
+    prefix = col_names[i]
+  }
+  col_names[i] = paste(prefix, col_subnames[i-1])
+}
+
+colnames(trade_countries_2020) = col_names
+
+trade_countries_2020 = trade_countries_2020[!(
+  trade_countries_2020$`Item (1)` =="Total Balance of Payments Basis"|
+    trade_countries_2020$`Item (1)` =="Net Adjustments"|
+    trade_countries_2020$`Item (1)` =="Total Census Basis"),]
+
+cont_list = rep(NA, length(trade_countries_2020$`Item (1)`))
+
+for (i in 1:length(trade_countries_2020$`Item (1)`)){
+  if (trade_countries_2020$`Item (1)`[i] == "North America"|
+      trade_countries_2020$`Item (1)`[i] == "Europe"|
+      trade_countries_2020$`Item (1)`[i] == "Pacific Rim Countries"|
+      trade_countries_2020$`Item (1)`[i] == "South/Central America"|
+      trade_countries_2020$`Item (1)`[i] == "Africa"|
+      trade_countries_2020$`Item (1)`[i] == "Other Countries"
+      ){
+        prefix = trade_countries_2020$`Item (1)`[i]
+      }
+  else{
+    cont_list[i] = prefix
+  }
+}
+
+trade_countries_2020$Continent = cont_list
+
+trade_countries_2020 = trade_countries_2020 %>%
+  filter(complete.cases(.))
+
+miss[nrow(miss) + 1,] = c('trade_countries_2020', 'exh14a', nrow(trade_countries_2020), sum(complete.cases(trade_countries_2020)))
+```
+
+
+```{r}
+
+countries_quarters = read_excel("ft900xlsx/exh20.xlsx",skip = 4)
+
+div = which(countries_quarters$`Country and Area` == "Balance"|
+              countries_quarters$`Country and Area` == "Exports"|
+              countries_quarters$`Country and Area` == "Imports")
+
+end_ind = which(countries_quarters$`Country and Area` == "South/Central America")
+
+balance_ind = 2:(div[2]-1)
+export_ind = (div[2]+1):(div[3]-1)
+import_ind = (div[3]+1):end_ind[3]
+
+
+countries_quarters_bal = countries_quarters[balance_ind, ]
+countries_quarters_exp = countries_quarters[export_ind, ]
+countries_quarters_imp = countries_quarters[import_ind, ]
+
+miss[nrow(miss) + 1,] = c('countries_quarters_bal', 'exh20', nrow(countries_quarters_bal), sum(complete.cases(countries_quarters_bal)))
+miss[nrow(miss) + 1,] = c('countries_quarters_exp', 'exh20', nrow(countries_quarters_exp), sum(complete.cases(countries_quarters_exp)))
+miss[nrow(miss) + 1,] = c('countries_quarters_imp', 'exh20', nrow(countries_quarters_imp), sum(complete.cases(countries_quarters_imp)))
+```
+
+```{r}
+
+countries_quarters_goods = read_excel("ft900xlsx/exh20a.xlsx",skip = 4)
+
+div = which(countries_quarters_goods$`Country and Area` == "Balance"|
+              countries_quarters_goods$`Country and Area` == "Exports"|
+              countries_quarters_goods$`Country and Area` == "Imports")
+
+end_ind = which(countries_quarters_goods$`Country and Area` == "South/Central America")
+
+balance_ind = 2:(div[2]-1)
+export_ind = (div[2]+1):(div[3]-1)
+import_ind = (div[3]+1):end_ind[3]
+
+
+countries_quarters_goods_bal = countries_quarters_goods[balance_ind, ]
+countries_quarters_goods_exp = countries_quarters_goods[export_ind, ]
+countries_quarters_goods_imp = countries_quarters_goods[import_ind, ]
+
+
+miss[nrow(miss) + 1,] = c('countries_quarters_goods_bal', 'exh20a', nrow(countries_quarters_goods_bal), sum(complete.cases(countries_quarters_goods_bal)))
+miss[nrow(miss) + 1,] = c('countries_quarters_goods_exp', 'exh20a', nrow(countries_quarters_goods_exp), sum(complete.cases(countries_quarters_goods_exp)))
+miss[nrow(miss) + 1,] = c('countries_quarters_goods_imp', 'exh20a', nrow(countries_quarters_goods_imp), sum(complete.cases(countries_quarters_goods_imp)))
+```
+
+
+```{r}
+
+countries_quarters_svs = read_excel("ft900xlsx/exh20b.xlsx",skip = 4)
+
+div = which(countries_quarters_svs$`Country and Area` == "Balance"|
+              countries_quarters_svs$`Country and Area` == "Exports"|
+              countries_quarters_svs$`Country and Area` == "Imports")
+
+end_ind = which(countries_quarters_svs$`Country and Area` == "South/Central America")
+
+balance_ind = 2:(div[2]-1)
+export_ind = (div[2]+1):(div[3]-1)
+import_ind = (div[3]+1):end_ind[3]
+
+
+countries_quarters_svs_bal = countries_quarters_svs[balance_ind, ]
+countries_quarters_svs_exp = countries_quarters_svs[export_ind, ]
+countries_quarters_svs_imp = countries_quarters_svs[import_ind, ]
+
+miss[nrow(miss) + 1,] = c('countries_quarters_svs_bal', 'exh20b', nrow(countries_quarters_svs_bal), sum(complete.cases(countries_quarters_svs_bal)))
+miss[nrow(miss) + 1,] = c('countries_quarters_svs_exp', 'exh20b', nrow(countries_quarters_svs_exp), sum(complete.cases(countries_quarters_svs_exp)))
+miss[nrow(miss) + 1,] = c('countries_quarters_svs_imp', 'exh20b', nrow(countries_quarters_svs_imp), sum(complete.cases(countries_quarters_svs_imp)))
+```
+
+
+
+
+```{r, fig.height = 6, fig.width = 8}
+miss_new = miss %>% pivot_longer(cols=c(3,4),names_to = "count type")
+
+
+library(viridis)
+
+ggplot(miss_new[1:8,], aes(fill=`count type`, y=value, x=dataset)) + 
+    geom_bar(position="dodge", stat="identity") +
+    ggtitle("Missing Pattern for Covid Data") +
+    # theme(legend.position="none") +
+    xlab("") +
+    coord_flip() +
+    guides(fill = guide_legend(reverse = TRUE))
+
+ggplot(miss_new[9:26,], aes(fill=`count type`, y=value, x=dataset)) + 
+    geom_bar(position="dodge", stat="identity") +
+    ggtitle("Missing Pattern for BOP Data (Trade)") +
+    # theme(legend.position="none") +
+    xlab("") +
+    coord_flip() +
+    guides(fill = guide_legend(reverse = TRUE))
+
+ggplot(miss_new[27:44,], aes(fill=`count type`, y=value, x=dataset)) + 
+    geom_bar(position="dodge", stat="identity") +
+    ggtitle("Missing Pattern for BOP Data (Countries and Areas)") +
+    # theme(legend.position="none") +
+    xlab("") +
+    coord_flip() +
+    guides(fill = guide_legend(reverse = TRUE))
+```
+
+Therefore, according to the graphs we created above, we could easily concluded that in all data we selected in this assignment are complete without any missing value, as they are all collected from government-operating websites that guarantee comprehensiveness as well as validity. In addition, we do not need to further fulfill the missing values within them via predicted values.
