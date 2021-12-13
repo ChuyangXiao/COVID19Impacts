@@ -7,3 +7,22 @@ site: bookdown::bookdown_site
 
 # Introduction
 
+## Background
+Since its overall outburst at the beginning of 2020, COVID-19 has been ceaselessly haunting the global economy from multiple extents. Due to the widespread of this exceedingly contagious epidemic, the international trade bore not only the deficiency of supply triggered by the loss of labor but the impediment of transportation induced by the national lockdowns as well. Therefore, the United States, one of the largest economies in the world, moreover, fell prey to such severe depression. One of the reflective facts is the unprecedented shortage in agricultural goods, a conventionally abundant recourse (The National Law Review, 2021). For instance, as the US Today reported, numerous fast-food suppliers, including McDonald's, KFC, Wendy’s, and Chick-fil-A, are currently facing meat shortages and hence must discontinue some of their classic products (Tyko, 2021). Therefore, in this project, we decide to compare the spreading map of COVID-19 with the trading routines of the US’s trading partners and therefore explore the relationships between hindrances the US' international trade is facing and the spread of COVID-19.
+
+## Research Questions
+
+a.	Is there any correlation between the declination in international trading of the US and the spread of COVID-19 from Jan 2020 to Sep 2021?
+
+b.	Which country’s international trade with the US was mostly affected during this period? Are they also the victims of the COVID-19?
+
+c.	Which sort of product or service is most severely affected during this period? Could simply the spread of COVID-19 fully account for this deficient, or there exists other possible triggers?
+
+## Further Insights
+If solely the spread of COVID-19 could not fully account for the abnormality in international trades, is there any other probably influential factor?
+
+
+## Reference
+
+  * The National Law Review. (2021). Labor Shortage Concerns a Bigger Problem for U.S. Agriculture Sector. [online] Available at: https://www.natlawreview.com/article/labor-shortage-concerns-bigger-problem-us-agriculture-sector
+  * Tyko, K. (2021). Is there a chicken shortage? How COVID, chicken sandwich war and chicken wing demand are impacting restaurants. [online] USA TODAY. Available at: https://www.usatoday.com/story/money/food/2021/05/06/chicken-shortage-2021-chicken-sandwich-war-chicken-wings-covid/4936554001/.

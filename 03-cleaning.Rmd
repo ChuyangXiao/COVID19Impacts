@@ -326,6 +326,7 @@ us_trade_good = us_trade_good %>%
 colnames(us_trade_good)
 ```
 
+From this dataset, we extracted a `us_trade_good` that includes the balance, import amount and export amount of goods involved in the international trade from January 2019 to August 2021. This organized variable could serve as complementary dataset of the dataset exh1.xlsx, and further examine the proportion of goods among all imports and exports.
 
 **5. Exhibit 13 - U.S. Trade in Goods by Principal End-Use Category**
 

@@ -1,2 +1,39 @@
 # Conclusion
 
+## Conducted Conclusion
+
+Consistent with all graphs and comments above, we could now answer the questions we raised at the beginning of this project.
+
+As the results presented in the first section demonstrated, during the rampant spread of COVID-19, the US indeed bore an undoubtedly significant loss in its international trade, both export and import, both goods and services. Moreover, considering the goods’ categories, we can also summarize that the major goods the US depends on suffered the greatest plunge in the trading amounts, compared with the data in previous years. Thus, we could say that along COVID-19’s spreading period, the international trading of the US indeed encountered a tremendous hindrance in both quality and quantity.
+
+However, simply the spread of COVID-19 could not fully explain the changing pattern of the international trading amount of the US as well as the current product shortages. First, despite of the loss of trading amount at the initial outburst of COVID-19 in the US, the import and export of goods and services soon rejuvenated right after the huge plunge. Besides, though it is commonly argued that the labor shortage caused by the widespread of COVID-19 led to the productivity deficiency, in fact, when the detected cases in the US reached its global maximum, the export and import of this nation were recovering back to the original level of the pre-COVID era. Moreover, regarding COVID-19’s spread in the US’ closest trading partners, we also found that the declination in their trades with the US mostly occurred at the beginning stage of COVID-19’s spread rather than its developing or worsening stages.
+
+In conclusion, the international trade of the US indeed suffered a severe plunge at the beginning of the COVID epoch, yet it may be too arbitrary to exclusively attribute the US’ loss in international trade and the recent shortage in goods to simply the global spread of COVID-19. On the other hand, by our prediction, the global panic induced by this unexpected virus as well as the following trading blocks, traveling prohibition, as well as negative public cries shall play more significant roles during this historical event.
+
+## Observed Obstacles
+
+Nevertheless, we additionally found that our exploration in this research question somehow limited from the following perspectives:
+
+- In our first section, we discussed the fluctuations in trading amount of each type of goods as well as their importance. Nevertheless, we could not dig deeper in the direction to examine which country is mostly responsible for which sort of good due to the lack of data.
+
+- In our second section, due to the constraint of the data format, we could not explicitly extract the exact monthly trading amount of each trading partner yet only the quarterly data, which led to the slight ambiguity of the result.
+
+- Since all our datasets are composed by numeric data, we could not produce some categorical plots or find the inner correlation between probably critical factors.
+
+## Further Focuses
+
+To further explore probable triggers of the recent goods shortage in the US, we decide to improve our exploratory approaches from the following perspectives:
+
+- First and foremost, we would like to enlarge the span of our data. Previously, we merely concerned the COVID-19’s cases and death as well as the international trading amount. In further studies, we would possibly include data about other crucial factors affecting the international trades, such as public opinions, USD’s exchange rate, or average wages of labors.
+
+- In addition, we may focus on presenting and relating the data from various viewpoints. For instance, we may transform some numeric data into categorical data (such as labeling them as high, low, medium), and then seek their possible correlations via paired graphs.
+
+## Learnt Lessons
+
+Within this project, we obtained some inspirations in EDAV as well:
+
+- Firstly, we learnt that the selection of the dataset is even more critical than displaying them. At the beginning of this project, we spent most of our time seeking the most inclusive as well as tidy dataset, and eventually found these government-published data, which had seldom missing values as well as well-organized formats. Had we merely selected a common dataset at that time, we would not only have spent countless time to fix the missing values and tidy the format, but also have been questioned about the validity of the data sources and conclusions.
+
+- Moreover, we also learnt that the coincidence might not indicate the correlation. Before conducting this study, we both considered that it was the spread of COVID-19 in the US leading to the shortages in labor and goods. Nevertheless, after this project, we now knew that simply COVID-19 might not fully account to this economic abnormality. 
+
+

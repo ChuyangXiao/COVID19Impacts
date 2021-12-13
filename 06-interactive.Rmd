@@ -1,3 +1,30 @@
 # Interactive component
 
 
+## The Interactive Graph
+
+<iframe src="My_interactive_graph.html" width="760" height="810"></iframe>
+    
+## Description
+
+The interactive part of our analysis was built with D3 version 7, and you can also find code here in our GitHub repo. This interactive graph has two components: the upper part is a bar chart displaying the importing and exporting amount of each category of product in a specific time range (this part of data comes from the `ft900xlsx/exh6.xlsx`), and the lower part is a line plot displaying the number of COVID-19 cases (this part of data comes from the `COVID-19Data/dataset 2/data.csv`). 
+
+The purpose of the interactive graph is to let the audience see the fluctuation in the trading amount over time. Moreover, audiences could actively compare the trading amount at each stage of COVID-19’s spread. For instance, via simple movements, you could compare the importing and exporting amounts during December 2020, when the detected cases of COVID-19 reached its global maximum, and those during March or April 2020, when the COVID-19 initially appeared in the US.
+
+## Instructions for Using the Interactive Graph
+
+- Initially, the upper graph would be blank, and the lower graph displayed a red line indicating the detected cases of COVID-19 in the US.
+
+- Then, you could land you mouse in any region in the lower graph. As soon as you land your mouse on a section of it, the current region would turn grey, and red and navy-blue bars would appear on the upper graph, indicating that you are currently observing a specific time zone.
+
+- To compare the trading condition from time to time, you can just move your mouse to another region in the lower graph, and then observe how the bars in the upper graph shrink and stretch.
+
+- Note: As this graph is comparatively tall, you had better zoom out to see it as a whole.
+
+
+
+
+
+
+    
+    

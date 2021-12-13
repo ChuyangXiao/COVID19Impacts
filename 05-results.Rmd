@@ -1,1 +1,1700 @@
 # Results
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
+```
+
+
+```{r}
+
+library(readxl)
+library(tidyverse)
+library(ggpubr)
+library(ggridges)
+library(gapminder)
+library(forcats)
+library(dplyr)
+library(ggplot2)
+
+library(reshape2)
+library(grid)
+
+```
+
+## Section 1: From which Extent was the International Trade of the US Affected During Pre- and Post-COVID period?
+
+### Export in goods plunges with quick recovery
+###### Graph 1
+
+```{r}
+
+int_trade_1 = read_excel("ft900xlsx/exh1.xlsx",skip = 4)
+
+col_names = colnames(int_trade_1)
+
+col_names_sub = int_trade_1[1,]
+
+# Combine the first two lines to get new column names
+for (i in 2:length(col_names)){
+  if (col_names[i] %in% c("Balance", "Exports", "Imports")){
+    prefix = col_names[i]
+  }
+  col_names[i] = paste(prefix, int_trade_1[1,][i])
+}
+colnames(int_trade_1) = col_names
+
+# Removed the useless rows
+int_trade_1 = int_trade_1[-c(1,46,47,48,49,50), ]
+
+row_names = int_trade_1$Period
+
+for (i in 1:length(row_names)){
+  if (row_names[i] %in% c("2019", "2020", "2021")){
+    prefix = row_names[i]
+  }
+  row_names[i] = paste(prefix,"-",row_names[i])
+}
+
+# Remove the rows with na
+int_trade_1$Period = row_names
+int_trade_1 = int_trade_1 %>%
+  filter(complete.cases(.))
+
+
+int_trade_df = subset(int_trade_1, select=-c(2,3,4,5,8))
+int_trade_df = int_trade_df[!(int_trade_df$Period== "2019 - Jan. - Aug."|
+                                int_trade_df$Period== "2019 - Jan. - Dec."|
+                                int_trade_df$Period== "2020 - Jan. - Aug."|
+                                int_trade_df$Period== "2020 - Jan. - Dec."| 
+                                int_trade_df$Period== "2021 - Jan. - Aug."),]
+int_trade_df$Period[which(int_trade_df$Period == "2021 - July (R)")] = "2021 - July"
+
+colnames(int_trade_df )[which(colnames(int_trade_df) == "Exports Goods (1)")] = "Exports Goods"
+colnames(int_trade_df )[which(colnames(int_trade_df) == "Imports Goods (1)")] = "Imports Goods"
+
+int_trade_df1 = melt(int_trade_df, 
+                     id.vars="Period")
+int_trade_df1$value = as.numeric(int_trade_df1$value)
+
+int_trade_exp = int_trade_df1[(int_trade_df1$variable == "Exports Goods"| 
+                                 int_trade_df1$variable == "Exports Services"),]
+
+int_trade_imp = int_trade_df1[(int_trade_df1$variable == "Imports Goods"| 
+                                 int_trade_df1$variable == "Imports Services"),]
+
+```
+
+```{r fig.height = 6, fig.width = 8}
+
+
+exp_line = ggplot(data = int_trade_exp, 
+                  aes(fct_relevel(Period, int_trade_df$Period), 
+                      value,group=variable, colour=variable)) +
+  geom_line(size = 1.5)+
+  xlab("Period")+
+  ylab("Export Amount")+
+  ggtitle("Export Amount of Goods and Services")+
+  theme(axis.text.x = element_text(angle = 90), 
+        axis.text=element_text(size=6))
+
+
+exp_line
+
+```
+
+```{r fig.height = 6, fig.width = 8}
+
+
+imp_line = ggplot(data = int_trade_imp, 
+                  aes(fct_relevel(Period, int_trade_df$Period), 
+                      value,
+                      group=variable,
+                      colour=variable)) +
+  geom_line(size = 1.5)+
+  xlab("Period")+
+  ylab("Import Amount")+
+  ggtitle("Import Amount of Goods and Services")+
+  theme(axis.text.x = element_text(angle = 90), 
+        axis.text=element_text(size=6))
+
+imp_line
+
+```
+
+
+These two line graphs depict the fluctuations in the exports and imports of the goods and services of the US from 2019 to 2021. Within the upper bar graph, there is an obvious and sharp decline in the export amount in goods starting at February 2020. Considering the first case of COVID-19 in the US detected by CDC on 20th Jan, 2020, it could be concluded that this significant plunge temporarily coincided with the national outburst of COVID-19. Likewise, after reached a lowest ebb (around 60% of the original amount) at the middle of 2020, the export amount of the goods enjoyed a rebound to the original average at the end of this year. Similarly, the import of goods as well suffered a sudden decrease in total amount during the same time span, yet from a relatively modest extent.
+
+On the other hand, similar to those of the goods, the import and export of services were also affected during this time period yet in a rather slight extent. According to both line plots, it is pretty overt that the import and export of the services also suffered a sudden fall since February 2020, particularly the export of the services. Nevertheless, compared with the rebounded exports and imports of the goods, it took a relatively longer time for services' trading amount to recover: till the end of the observation span, neither the import nor the export of services had returned to the original value before the outburst of COVID-19.
+
+To summarize, comparing the import and export of the goods and services, we found:
+
+- From the categorical perspective, the international trading of the US in both services and goods experienced significant declines during the period from February 2020 to Dec 2020. 
+
+- Specifically, the imports and exports of goods, compared with those of the services, were more vulnerable in this period due to their excessive average amount. Nevertheless, the trading in the goods recovered in a much shorter term rather than that of the services. 
+
+- Likewise, from the aspect of trading direction, the export amount of the US suffered a much more significant loss relative to the import amount.
+
+Such phenomenon could be accounted from multiple viewpoints. As the trades in services basically depend on labor-sparse jobs, including financial services, intellectual property, telecommunications, information services etc., the pandemic was barely capable of immediately paralyzing the major producers of these services. By contrast, since the production and transportation of the goods may require intense labor, the massive outburst of COVID-19 may seriously jeopardize their source of human labor. Thus, the trading in goods were more affected during this period. On the other hand, compared with exportation, the importation of goods and services basically came from international markets or foreign producers, which were commonly multiple-sourced as well as hard-wired, and therefore were comparatively stable and robust. 
+
+### No significant shift in product end-use
+###### Graph 2
+
+```{r}
+
+imp_trade_cat = read_excel("ft900xlsx/exh8.xlsx",
+                           skip = 5)                  # remove the title and subtitles
+
+col_names = colnames(imp_trade_cat)
+
+col_subnames = imp_trade_cat[1,]
+
+for (i in 2:length(col_names)){
+  col_name = col_names[i]
+  # Remove the suffix
+  if (substr(col_name, 1, 4) =="Year"){
+    col_name = "Year-to-Date"
+  }
+  col_names[i] = paste(col_name,
+                    col_subnames[i])
+}
+
+# Set the new row names
+colnames(imp_trade_cat) = col_names
+
+imp_trade_cat = imp_trade_cat %>%
+  filter(complete.cases(.))
+
+imp_trade_cat = imp_trade_cat[!(imp_trade_cat$`Item (1)` =="Total, Balance of Payments Basis"|
+                                  imp_trade_cat$`Item (1)` =="Net Adjustments"|
+                                  imp_trade_cat$`Item (1)` =="Total, Census Basis"),]
+
+imp_trade_tot = imp_trade_cat[(imp_trade_cat$`Item (1)` =="Foods, feeds, and beverages"|
+                                 imp_trade_cat$`Item (1)` =="Industrial supplies and materials"|
+                                 imp_trade_cat$`Item (1)` =="Capital goods, except automotive"|
+                                 imp_trade_cat$`Item (1)` =="Automotive vehicles, parts, and engines"|
+                                 imp_trade_cat$`Item (1)` =="Consumer goods"|
+                                 imp_trade_cat$`Item (1)` =="Other goods"),]
+
+cat_list = rep(NA, length(imp_trade_cat$`Item (1)`))
+
+for (i in 1:length(imp_trade_cat$`Item (1)`)){
+  if (imp_trade_cat$`Item (1)`[i] =="Foods, feeds, and beverages"|
+      imp_trade_cat$`Item (1)`[i] =="Industrial supplies and materials"|
+      imp_trade_cat$`Item (1)`[i] =="Capital goods, except automotive"|
+      imp_trade_cat$`Item (1)`[i] =="Automotive vehicles, parts, and engines"|
+      imp_trade_cat$`Item (1)`[i] =="Consumer goods"|
+      imp_trade_cat$`Item (1)`[i] =="Other goods"){
+        prefix = imp_trade_cat$`Item (1)`[i]
+      }
+  else{
+    cat_list[i] = prefix
+  }
+}
+
+imp_trade_cat$Category = cat_list
+
+imp_trade_cat = imp_trade_cat %>%
+  filter(complete.cases(.))
+
+# The output datasets in this section are imp_trade_cat and imp_trade_tot
+
+```
+
+
+```{r}
+
+exp_trade_cat = read_excel("ft900xlsx/exh7.xlsx",
+                           skip = 5)                  # remove the title and subtitles
+
+col_names = colnames(exp_trade_cat)
+
+col_subnames = exp_trade_cat[1,]
+
+for (i in 2:length(col_names)){
+  col_name = col_names[i]
+  # Remove the suffix
+  if (substr(col_name, 1, 4) =="Year"){
+    col_name = "Year-to-Date"
+  }
+  col_names[i] = paste(col_name,
+                    col_subnames[i])
+}
+
+# Set the new row names
+colnames(exp_trade_cat) = col_names
+
+exp_trade_cat = exp_trade_cat %>%
+  filter(complete.cases(.))
+
+exp_trade_cat = exp_trade_cat[!(exp_trade_cat$`Item (1)` =="Total, Balance of Payments Basis"|
+                                  exp_trade_cat$`Item (1)` =="Net Adjustments"|
+                                  exp_trade_cat$`Item (1)` =="Total, Census Basis"),]
+
+exp_trade_tot = exp_trade_cat[(exp_trade_cat$`Item (1)` =="Foods, feeds, and beverages"|
+                                 exp_trade_cat$`Item (1)` =="Industrial supplies and materials"|
+                                 exp_trade_cat$`Item (1)` =="Capital goods, except automotive"|
+                                 exp_trade_cat$`Item (1)` =="Automotive vehicles, parts, and engines"|
+                                 exp_trade_cat$`Item (1)` =="Consumer goods"|
+                                 exp_trade_cat$`Item (1)` =="Other goods"),]
+
+cat_list = rep(NA, length(exp_trade_cat$`Item (1)`))
+
+for (i in 1:length(exp_trade_cat$`Item (1)`)){
+  if (exp_trade_cat$`Item (1)`[i] =="Foods, feeds, and beverages"|
+      exp_trade_cat$`Item (1)`[i] =="Industrial supplies and materials"|
+      exp_trade_cat$`Item (1)`[i] =="Capital goods, except automotive"|
+      exp_trade_cat$`Item (1)`[i] =="Automotive vehicles, parts, and engines"|
+      exp_trade_cat$`Item (1)`[i] =="Consumer goods"|
+      exp_trade_cat$`Item (1)`[i] =="Other goods"){
+        prefix = exp_trade_cat$`Item (1)`[i]
+      }
+  else{
+    cat_list[i] = prefix
+  }
+}
+
+exp_trade_cat$Category = cat_list
+
+exp_trade_cat = exp_trade_cat %>%
+  filter(complete.cases(.))
+
+# The output datasets in this section are exp_trade_cat and exp_trade_tot
+
+```
+
+
+```{r, fig.height = 6, fig.width = 8}
+# Grouped Boxplot
+
+# ------- Export ------
+# select useful columns and pivot to long format
+exp_trade_cat_subset = exp_trade_cat %>% select(c(1,5,6,8)) %>% pivot_longer(cols = c(`Year-to-Date 2020`,`Year-to-Date 2021`), names_to = "year", values_to = "export") %>% mutate(export = export / 1e3) %>% mutate(Category=str_wrap(Category, 10))
+
+ggplot(exp_trade_cat_subset, aes(x=reorder(Category, export, IQR), y=export, fill=year)) + 
+  geom_boxplot() +
+  coord_flip() +
+  xlab("Principal End-Use Category") +
+  ylab("Export of Goods (billions of dollars)") +
+  ggtitle("Boxplot for Export of Goods by End-Use Category") +
+  theme(legend.position="bottom") + 
+  guides(fill=guide_legend(reverse=TRUE)) 
+```
+
+
+
+```{r, fig.height = 6, fig.width = 8}
+# ------- Import ------
+# select useful columns and pivot to long format
+# column 2020 is character type due to (-) for "Vessels, except scrap"
+imp_trade_cat_subset = imp_trade_cat %>% select(c(1,5,6,8)) %>% mutate_at("Year-to-Date 2020", as.numeric) %>% pivot_longer(cols = c(`Year-to-Date 2020`,`Year-to-Date 2021`), names_to = "year", values_to = "import") %>% mutate(import = import / 1e3)  %>% mutate(Category=str_wrap(Category, 10)) %>% na.omit()
+
+ggplot(imp_trade_cat_subset, aes(x=reorder(Category, import, IQR), y=import, fill=year)) + 
+  geom_boxplot() +
+  coord_flip() +
+  xlab("Principal End-Use Category") +
+  ylab("Import of Goods (billions of dollars)") +
+  ggtitle("Boxplot for Import of Goods by End-Use Category") +
+  theme(legend.position="bottom") + 
+  guides(fill=guide_legend(reverse=TRUE)) 
+```
+
+
+From these two grouped box plots, we can tell the State’s dependency on each category of goods’ import and export. All products are divided into six principal end-use categories and within each there are more sub level categories. Note that we plot the value of each subcategory as a data point here, so this graph does not suggest anything on the total value of each principal category but the underlying distribution instead. 
+
+Generally, regarding both import and export, the trading amount of automotive-related products was the highest. Among all exported goods, other manufacturing products such as capital goods and industrial supplies as well occupied decent trading amounts. And among all imported goods, the general patterns are like that of exported goods, except for capital goods which takes lower value compared to export and consumer goods is ranked higher probably because of several outliers. The pattern for both 2020 and 2021 are quite similar in the sense that we do not seem to observe significant shift in values between the same pairs. However, 2021 seem to slightly outperform 2020 which suggests a recovery in the economy.
+
+We can look into these outliers within each principal categories: In terms of export, for `Capital goods, except automotive`, the highest value products are Semiconductors and Industrial machines; for `Industrial supplies and materials`, Crude Oil and Petroleum products are the highest; for `Consumer goods`, ‘Pharmaceutical Preparations’ is the most notable outlier. In terms of import, most outliers are the same except we are especially interested in the consumer goods division. Taking an in-depth look, we found out that besides ‘Pharmaceutical Preparations’ as the leading outlier, ‘Cell phones and other household goods’, ‘Apparel, textiles, non-wool or cotton’, and ‘Toys, games, and sporting goods’ also appear on the list. So, we can tell the production of these goods in US rely heavily on import.
+
+Hence, regarding the two box plots above, we could roughly conclude that:
+
+- During the COVID-19 period, the US is mostly dependent to the imports of auto-related products, capital goods, and consumer goods, and the exports of auto-related products, capital goods, and industrial supplies. 
+
+- Compared with those in 2020, the imports and exports of each category of good experience an elevation in the total trading amount in 2021, which shall be considered a harbinger of recover.
+
+
+### Food stays stable while manufacturing industry is hit
+###### Graph 3
+
+
+```{r}
+temp_goods_cat = read_excel("ft900xlsx/exh6.xlsx",skip = 5)
+
+div = which(temp_goods_cat$`...2` == "Exports"|
+              temp_goods_cat$`...2` == "Imports")
+
+export_ind = 2:(div[2]-1)
+import_ind = (div[2]+1):56
+
+
+temp_goods_cat_exp = temp_goods_cat[export_ind, ]
+temp_goods_cat_imp = temp_goods_cat[import_ind, ]
+
+row_names = temp_goods_cat_exp$`...1`
+
+for (i in 1:length(row_names)){
+  if (row_names[i] %in% c("2020", "2021")){
+    prefix = row_names[i]
+    }
+  row_names[i] = paste(prefix,"-",row_names[i])
+  }
+
+temp_goods_cat_exp$`...1` = row_names
+
+temp_goods_cat_exp = temp_goods_cat_exp %>%
+  filter(complete.cases(.))
+
+col_names = colnames(temp_goods_cat_exp)
+
+col_names[1] = "Period"
+col_names[2] = "Total Balance of Payments Basis"
+col_names[3] = "Net  Adjustments"
+col_names[4] = "Total Census Basis"
+
+colnames(temp_goods_cat_exp) = col_names
+
+
+row_names = temp_goods_cat_imp$`...1`
+
+for (i in 1:length(row_names)){
+  if (row_names[i] %in% c("2020", "2021")){
+    prefix = row_names[i]
+    }
+  row_names[i] = paste(prefix,"-",row_names[i])
+  }
+
+temp_goods_cat_imp$`...1` = row_names
+
+temp_goods_cat_imp = temp_goods_cat_imp %>%
+  filter(complete.cases(.))
+
+col_names = colnames(temp_goods_cat_imp)
+
+col_names[1] = "Period"
+col_names[2] = "Total Balance of Payments Basis"
+col_names[3] = "Net  Adjustments"
+col_names[4] = "Total Census Basis"
+
+colnames(temp_goods_cat_imp) = col_names
+```
+
+
+```{r fig.height = 6, fig.width = 8}
+
+exp_df = subset(temp_goods_cat_exp, select=-c(2,3,4))
+exp_df = exp_df[!(exp_df$Period=="2020 - Jan. - Dec."| 
+                    exp_df$Period== "2021 - Jan. - Aug."|
+                    exp_df$Period== "2020 - Jan. - Aug."),]
+
+exp_df$Period[which(exp_df$Period == "2021 - July (R)")] = "2021 - July"
+colnames(exp_df)[which(colnames(exp_df) == "Industrial Supplies (2)")] = "Industrial Supplies"
+
+exp_df1 = melt(exp_df, 
+               id.vars = "Period", 
+               measure.vars = colnames(exp_df))
+exp_df1 = exp_df1[!(exp_df1$variable=="Period"),]
+exp_df1$value = as.numeric(exp_df1$value)
+
+exp_gp = ggplot(exp_df1, aes(x = fct_relevel(Period, exp_df$Period), y = value)) + 
+  geom_bar(stat = "identity", 
+           fill = "navyblue") + 
+  facet_wrap(~ variable, scales = "free") + 
+  ylim(0, 60000)+
+  xlab("Period") +
+  ylab("Export Amount") +
+  ggtitle("The Time-wise Export Amount of the US") +
+  theme(
+    panel.background = element_rect(fill = "grey94",
+                                    colour = "grey94",
+                                    size = 0.5, 
+                                    linetype = "solid"),
+    panel.grid.major = element_line(size = 0.5, 
+                                    linetype = 'solid',
+                                    colour = "white"), 
+  panel.grid.minor = element_line(size = 0.25, 
+                                  linetype = 'solid',
+                                  colour = "white"))+
+  theme(axis.text.x = element_text(angle = 90),
+        axis.text=element_text(size=6))
+
+exp_gp
+
+```
+
+
+```{r fig.height = 6, fig.width = 8}
+
+imp_df = subset(temp_goods_cat_imp, 
+                select=-c(2,3,4))
+imp_df = imp_df[!(imp_df$Period=="2020 - Jan. - Dec."| 
+                    imp_df$Period== "2021 - Jan. - Aug."|
+                    imp_df$Period== "2020 - Jan. - Aug."),]
+
+imp_df$Period[which(imp_df$Period == "2021 - July (R)")] = "2021 - July"
+colnames(imp_df)[which(colnames(imp_df) == "Industrial Supplies (2)")] = "Industrial Supplies"
+
+imp_df1 = melt(imp_df, 
+               id.vars = "Period", 
+               measure.vars = colnames(imp_df))
+imp_df1 = imp_df1[!(imp_df1$variable=="Period"),]
+imp_df1$value = as.numeric(imp_df1$value)
+
+imp_gp = ggplot(imp_df1, 
+                aes(x = fct_relevel(Period, imp_df$Period), y = value)) + 
+  geom_bar(stat = "identity", 
+           fill = "navyblue") + 
+  facet_wrap(~ variable, scales = "free") + 
+  ylim(0, 80000)+
+  xlab("Period") +
+  ylab("Import Amount") +
+  ggtitle("The Time-wise Import Amount of the US") +
+  theme(
+    panel.background = element_rect(fill = "grey94",
+                                    colour = "grey94",
+                                    size = 0.5, 
+                                    linetype = "solid"),
+    panel.grid.major = element_line(size = 0.5, 
+                                    linetype = 'solid',
+                                    colour = "white"), 
+  panel.grid.minor = element_line(size = 0.25, 
+                                  linetype = 'solid',
+                                  colour = "white"))+
+  theme(axis.text.x = element_text(angle = 90), 
+        axis.text=element_text(size=6))
+
+imp_gp
+
+```
+
+
+The two faceted bar plots about the fluctuations in the imports and exports of each principal end-use category tells us how imports and exports of each good category change over time. From the temporal viewpoint, we could conclude that the plunge in trading amount of most categories of products occurred during the period from March 2020 to September 2020. Likewise, from the category-wise perspective, it is obvious that industrial supplies, capital goods, and auto-related products, categories with relatively high trading amounts, suffered tremendous fall during this period. By contrast, though most categories of goods experienced declinations in trading amounts, the exports, and imports of `Foods, Feeds, and Beverages` maintained stable, without any significant raise or fall. 
+
+Hence, from this graph, we could summarize that:
+
+- Products that the US majorly depends on all suffered serious plunges in importing and exporting amounts.
+
+- All plunges occurred during the period from March 2020 to September 2020.
+
+- The import and export of `Foods, Feeds, and Beverages`, however, remain constant during this time span.
+
+We believe that the observation `Foods, Feeds, & Beverages` is relatively stable could be explained from two aspects: Firstly, the food category counts as life necessity, meaning the demand elasticity is high. Firms usually won’t stop the production for these goods and even if they are forced to do so in extreme situations, the government might step in and provide support or enforcement to ensure stability. Second, the production of most agricultural and food products is highly automated in the US, which means it doesn’t require lots of labor, and thus would not be affected by Covid as much.
+
+
+### Spot the close trading partners of US
+###### Graph 4
+
+```{r}
+
+trade_countries_2021 = read_excel("ft900xlsx/exh14.xlsx",skip = 5)
+
+trade_countries_2021[trade_countries_2021 == "(R)"] = NA
+
+# Remove the useless rows
+trade_countries_2021 = trade_countries_2021[1:(which(trade_countries_2021$`Item (1)` == "Unidentified Countries (2)")-1), ]
+
+col_subnames = trade_countries_2021[1,]
+col_subnames = col_subnames[!is.na(col_subnames)]
+
+trade_countries_2021 = trade_countries_2021[ , colSums(is.na(trade_countries_2021)) <= 1]
+
+trade_countries_2021 = trade_countries_2021 %>%
+  filter(complete.cases(.))
+
+col_names = colnames(trade_countries_2021)
+
+for (i in 2:length(col_names)){
+  if (col_names[i] %in% c("Balance", "Exports", "Imports")){
+    prefix = col_names[i]
+  }
+  col_names[i] = paste(prefix, col_subnames[i-1])
+}
+
+colnames(trade_countries_2021) = col_names
+
+trade_countries_2021 = trade_countries_2021[!(
+  trade_countries_2021$`Item (1)` =="Total Balance of Payments Basis"|
+    trade_countries_2021$`Item (1)` =="Net Adjustments"|
+    trade_countries_2021$`Item (1)` =="Total Census Basis"),]
+
+cont_list = rep(NA, length(trade_countries_2021$`Item (1)`))
+
+for (i in 1:length(trade_countries_2021$`Item (1)`)){
+  if (trade_countries_2021$`Item (1)`[i] == "North America"|
+      trade_countries_2021$`Item (1)`[i] == "Europe"|
+      trade_countries_2021$`Item (1)`[i] == "Pacific Rim Countries"|
+      trade_countries_2021$`Item (1)`[i] == "South/Central America"|
+      trade_countries_2021$`Item (1)`[i] == "Africa"|
+      trade_countries_2021$`Item (1)`[i] == "Other Countries"
+      ){
+        prefix = trade_countries_2021$`Item (1)`[i]
+      }
+  else{
+    cont_list[i] = prefix
+  }
+}
+
+trade_countries_2021$Continent = cont_list
+
+trade_countries_2021 = trade_countries_2021 %>%
+  filter(complete.cases(.))
+
+```
+
+
+```{r}
+
+trade_countries_2020 = read_excel("ft900xlsx/exh14a.xlsx",skip = 5)
+
+trade_countries_2020[trade_countries_2020 == "(R)"] = NA
+
+# Remove the useless rows
+trade_countries_2020 = trade_countries_2020[1:(which(trade_countries_2020$`Item (1)` == "Unidentified Countries (2)")-1), ]
+
+col_subnames = trade_countries_2020[1,]
+col_subnames = col_subnames[!is.na(col_subnames)]
+
+trade_countries_2020 = trade_countries_2020[ , colSums(is.na(trade_countries_2020)) <= 1]
+
+trade_countries_2020 = trade_countries_2020 %>%
+  filter(complete.cases(.))
+
+col_names = colnames(trade_countries_2020)
+
+for (i in 2:length(col_names)){
+  if (col_names[i] %in% c("Balance", "Exports", "Imports")){
+    prefix = col_names[i]
+  }
+  col_names[i] = paste(prefix, col_subnames[i-1])
+}
+
+colnames(trade_countries_2020) = col_names
+
+trade_countries_2020 = trade_countries_2020[!(
+  trade_countries_2020$`Item (1)` =="Total Balance of Payments Basis"|
+    trade_countries_2020$`Item (1)` =="Net Adjustments"|
+    trade_countries_2020$`Item (1)` =="Total Census Basis"),]
+
+cont_list = rep(NA, length(trade_countries_2020$`Item (1)`))
+
+for (i in 1:length(trade_countries_2020$`Item (1)`)){
+  if (trade_countries_2020$`Item (1)`[i] == "North America"|
+      trade_countries_2020$`Item (1)`[i] == "Europe"|
+      trade_countries_2020$`Item (1)`[i] == "Pacific Rim Countries"|
+      trade_countries_2020$`Item (1)`[i] == "South/Central America"|
+      trade_countries_2020$`Item (1)`[i] == "Africa"|
+      trade_countries_2020$`Item (1)`[i] == "Other Countries"
+      ){
+        prefix = trade_countries_2020$`Item (1)`[i]
+      }
+  else{
+    cont_list[i] = prefix
+  }
+}
+
+trade_countries_2020$Continent = cont_list
+
+trade_countries_2020 = trade_countries_2020 %>%
+  filter(complete.cases(.))
+
+```
+
+
+```{r, fig.height = 6, fig.width = 8}
+world <- map_data("world")
+
+
+trade_countries_2020_subset = trade_countries_2020 %>%
+  select(c(1,7,10,11)) %>% 
+  rename("country"="Item (1)", "export"="Exports Year-to-Date\r\n2020", "import"="Imports Year-to-Date\r\n2020") %>%
+  mutate(export=as.numeric(export)/1e3, import=as.numeric(import)/1e3) %>%
+  mutate(export_level=ifelse(export<5,"0-5", ifelse(export<20,"5-20", ifelse(export<60,"20-60", ifelse(export<100,"60-100","100+"))))) %>%
+  mutate(import_level=ifelse(import<10,"0-10", ifelse(import<40,"10-40", ifelse(import<150,"40-100", ifelse(import<150,"100-150","150+")))))
+
+world_subset = world %>% 
+  left_join(trade_countries_2020_subset, by=c("region"="country")) %>%
+  mutate(export_level=fct_relevel(export_level, "100+", "60-100", "20-60", "5-20", "0-5")) %>% 
+  mutate(import_level=fct_relevel(import_level, "150+", "100-150", "40-100", "10-40", "0-10"))
+
+
+plain <- theme(
+  axis.text = element_blank(),
+  axis.line = element_blank(),
+  axis.ticks = element_blank(),
+  panel.border = element_blank(),
+  panel.grid = element_blank(),
+  axis.title = element_blank(),
+  panel.background = element_rect(fill = "darkgray"),
+  plot.title = element_text(hjust = 0.5),
+  legend.position="bottom"
+)
+
+
+ggplot(world_subset, aes(x=long,y=lat,group=group)) +
+  geom_polygon(aes(fill=export_level), color = "gray10", size = 0.1) +
+  coord_fixed(1.3) +
+  scale_fill_brewer(palette = "PuBu", direction=-1, na.translate = FALSE) +
+  ggtitle("2020 U.S. Export in Goods by Selected Countries \n (in billions of dollars)") +
+  plain + 
+  guides(fill=guide_legend(reverse=TRUE)) 
+```
+
+
+```{r, fig.height = 6, fig.width = 8}
+ggplot(world_subset, aes(x=long,y=lat,group=group)) +
+  geom_polygon(aes(fill=import_level), color = "gray10", size = 0.1) +
+  coord_fixed(1.3) +
+  scale_fill_brewer(palette = "PuBu", direction=-1, na.translate = FALSE) +
+  ggtitle("2020 U.S. Import in Goods by Selected Countries \n (in billions of dollars)") +
+  plain + 
+  guides(fill=guide_legend(reverse=TRUE)) 
+```
+
+
+These two geographical maps portrait the trading amount of each country with respect to US in year 2020. The value amount is very unevenly distributed. There are several major trading relationships with extremely large values, while the rest are staying below the tens (in billions of dollars). That is the reason why we choose to manually set the groups for import and exports and display it in this discrete format instead of the original continuous values. Note that the data in the original excel sheet is not inclusive of all the countries around the world, so here we only take a look at the available selection of countries.
+
+For export, the top 5 trading partners with the United States are Canada, Mexico, China, Japan, Germany. Then in the top 10 range, we have some other European countries, as well as Brazil. For import, the top 5 trading partners with the United States are China, Mexico, Canada, Japan, Germany. Then in the top 10 range, we have some other European countries, as well as India. One interesting correlation we can discover in this case is that in general, a close export relationship with US also indicate a close import relationship with US. In our following discussions, we will be looking into some of these close partners in detail. In addition, we can see that these top 10 trading partners are located in different continent across the world, witch include North America, South America, Asia, and Europe. So that depicts a quite diverse trade network. However, we do observe a closer trading relationship for US with countries that are adjacent geographically. 
+
+From these graphs, we could conclude:
+
+- The US' trading partners are distributed mostly in the western Europe, eastern Asia, and north America.
+
+- North American trading partners are high in both export and import amount. Eastern Asian states generally have relatively lower export amount yet higher import amount.
+
+
+### The hit of Covid is real especially on close trading partners
+###### Graph 5
+
+```{r}
+
+countries_quarters = read_excel("ft900xlsx/exh20.xlsx",skip = 4)
+
+div = which(countries_quarters$`Country and Area` == "Balance"|
+              countries_quarters$`Country and Area` == "Exports"|
+              countries_quarters$`Country and Area` == "Imports")
+
+end_ind = which(countries_quarters$`Country and Area` == "South/Central America")
+
+balance_ind = 2:(div[2]-1)
+export_ind = (div[2]+1):(div[3]-1)
+import_ind = (div[3]+1):end_ind[3]
+
+
+countries_quarters_bal = countries_quarters[balance_ind, ]
+countries_quarters_exp = countries_quarters[export_ind, ]
+countries_quarters_imp = countries_quarters[import_ind, ]
+
+```
+
+
+```{r fig.height = 6, fig.width = 8}
+
+countries_exp_df = countries_quarters_exp[!(countries_quarters_exp$`Country and Area` == "CAFTA-DR"),]
+
+countries_exp_df1 = subset(countries_exp_df, 
+                          select=c(1,8,9,10))
+colnames(countries_exp_df1) = c("Country and Area",
+                                "Annual 2018", 
+                                "Annual 2019",
+                                "Annual 2020")
+
+countries_exp_df1 = melt(countries_exp_df1, 
+                         id.vars="Country and Area")
+countries_exp_df1$value = as.numeric(countries_exp_df1$value)
+
+countries_exp_dot = ggplot(data=countries_exp_df1, 
+                           aes(y = reorder(`Country and Area`, value), 
+                               x = value, 
+                               color = variable)) +
+  geom_point()+
+  xlab("Annual Export Amount")+
+  ylab("Country and Area")+
+  ggtitle("Annual Export Amount of Each Country and Area")
+
+countries_exp_dot
+
+```
+
+```{r fig.height = 6, fig.width = 8}
+
+countries_imp_df = countries_quarters_imp[!(countries_quarters_imp$`Country and Area` == "CAFTA-DR"),]
+
+countries_imp_df1 = subset(countries_imp_df, 
+                          select=c(1,8,9,10))
+colnames(countries_imp_df1) = c("Country and Area",
+                                "Annual 2018", 
+                                "Annual 2019",
+                                "Annual 2020")
+
+countries_imp_df1 = melt(countries_imp_df1, 
+                         id.vars="Country and Area")
+countries_imp_df1$value = as.numeric(countries_imp_df1$value)
+
+countries_imp_dot = ggplot(data=countries_imp_df1, 
+                           aes(y = reorder(`Country and Area`, value), 
+                               x = value, 
+                               color = variable)) +
+  geom_point()+
+  xlab("Annual Import Amount")+
+  ylab("Country and Area")+
+  ggtitle("Annual Import Amount of Each Country and Area")
+
+countries_imp_dot
+
+```
+
+
+```{r fig.height = 6, fig.width = 8}
+
+countries_exp_df2 = subset(countries_exp_df, 
+                           select = c(1,2,3,6,7))
+
+countries_exp_df3 = melt(countries_exp_df2, 
+                         id.vars = "Country and Area")
+
+countries_exp_df3$variable = as.character(countries_exp_df3$variable)
+countries_exp_df3$value = as.numeric(countries_exp_df3$value)
+
+countries_exp_df3 = countries_exp_df3 %>%
+  mutate(Year = case_when(
+    endsWith(countries_exp_df3$variable, "0") ~ "2020",
+    endsWith(countries_exp_df3$variable, "1") ~ "2021"
+    ))
+
+countries_exp_df3 = countries_exp_df3 %>%
+  mutate(Quarter = case_when(
+    startsWith(countries_exp_df3$variable, "F") ~ "First Quarter",
+    startsWith(countries_exp_df3$variable, "S") ~ "Second Quarter"
+    ))
+
+countries_exp_dot2 = ggplot(data = countries_exp_df3, 
+                            aes(y = reorder(`Country and Area`, value),
+                                x = value,
+                                color = Year
+                                  )
+                            )+
+  geom_point()+
+  xlim(0, 300000)+
+  facet_wrap(~ Quarter, scales = "free") + 
+  xlab("Quarterly Export Amount")+
+  ylab("Country and Area")+
+  theme(legend.position="bottom")
+
+countries_exp_dot2
+
+```
+
+
+```{r fig.height = 6, fig.width = 8}
+
+countries_imp_df2 = subset(countries_imp_df, 
+                           select = c(1,2,3,6,7))
+
+countries_imp_df3 = melt(countries_imp_df2, 
+                         id.vars = "Country and Area")
+
+countries_imp_df3$variable = as.character(countries_imp_df3$variable)
+countries_imp_df3$value = as.numeric(countries_imp_df3$value)
+
+countries_imp_df3 = countries_imp_df3 %>%
+  mutate(Year = case_when(
+    endsWith(countries_imp_df3$variable, "0") ~ "2020",
+    endsWith(countries_imp_df3$variable, "1") ~ "2021"
+    ))
+
+countries_imp_df3 = countries_imp_df3 %>%
+  mutate(Quarter = case_when(
+    startsWith(countries_imp_df3$variable, "F") ~ "First Quarter",
+    startsWith(countries_imp_df3$variable, "S") ~ "Second Quarter"
+    ))
+
+countries_imp_dot2 = ggplot(data = countries_imp_df3, 
+                            aes(y = reorder(`Country and Area`, value),
+                                x = value,
+                                color = Year
+                                  )
+                            )+
+  geom_point()+
+  xlim(0, 300000)+
+  facet_wrap(~ Quarter, scales = "free")+
+  xlab("Quarterly Import Amount")+
+  ylab("Country and Area")+
+  theme(legend.position="bottom")
+
+countries_imp_dot2
+
+```
+
+
+In the above Cleveland dot plots, we zoom in to take a further look at these close trading partner countries defined and extracted from graph 4. We first take a top level overview on the annual amount of export and import for each of the countries in the first two graphs. By juxtaposing the annual sum of year 2018, 2019, and 2020 together, it’s very obvious that the sum for 2020 is indeed the lowest among the three. This observation applies for almost every country with few exception. In particular, the top 5 trading partners are the ones that are most affected by COVID-19 in this case, as we observe significant amount of drop in both the export and import values for them. And overall import seem to be affected less than export which reaffirms our observation from previous discussions. This again suggests that the US might have undergone worse situations of pandemic compared to its trading partners, thus experiencing a deterioration in its production and supplies.
+
+Since the current year, year 2021, hasn’t been finished yet, we decide to not put it in the annual comparison graphs directly. As an alternative, we laid out the quarterly data for year 2020 and 2021 for comparison. For the first quarter, both import and export are similar between these two years. But for the second quarter,  the distinction here  is again quite obvious. This observation reaffirms the fact that the US international trade underwent a ‘hit and recovery’ process during the pandemic period.
+
+Hence, we could conclude that:
+
+- Compared to the annual trading amounts of 2018 and 2019, that of 2020 has a significant decrease.
+
+- Relative to the quarterly trading amount of 2020, that of 2021 enjoyed a rebound in the first and second quarter.
+
+- The 7 closest trading partner with the US are China, Japan, Korea, Germany, the UK, Canada, and Mexico. Thus, in the following section, we would mostly focus on COVID condition in these 7 countries.
+
+
+## Section 2: Could the spread of COVID19 account for such changes?
+### Severity of Covid among close partners: Is it the major killer?
+###### Graph 6
+
+```{r}
+
+covid_raw_data = read.csv(file = 'COVID-19data/dataset 2/data.csv')
+
+covid_weekly_case = covid_raw_data[covid_raw_data$indicator == 'cases',]
+covid_weekly_death = covid_raw_data[covid_raw_data$indicator == 'deaths',]
+
+tidy_covid_weekly_func <- function(covid_weekly,mode){
+  if (mode == "cum"){
+    id_var = "cumulative_count"
+    }
+  else{id_var = "weekly_count"
+    }
+
+  tidy_weekly = pivot_wider(covid_weekly[,c("country", 
+                                            "country_code", 
+                                            "continent", 
+                                            id_var,
+                                            "year_week")], 
+                            names_from = year_week, 
+                            values_from = id_var,
+                            values_fill = 0)
+  
+  tidy_weekly = tidy_weekly[order(tidy_weekly$continent,
+                                  tidy_weekly$country),]
+  
+  return(tidy_weekly)
+}
+
+tidy_case_cum = tidy_covid_weekly_func(covid_weekly_case,"cum")
+tidy_case_count = tidy_covid_weekly_func(covid_weekly_case,"count")
+
+tidy_death_cum = tidy_covid_weekly_func(covid_weekly_death,"cum")
+tidy_death_count = tidy_covid_weekly_func(covid_weekly_death,"count")
+
+
+col_names = colnames(tidy_case_count)
+
+for (i in 4: length(col_names)){
+  date_ls = str_split(col_names[i], "-")
+  year = as.numeric(date_ls[[1]][1])
+  week = as.numeric(date_ls[[1]][2])-1
+  new_date = as.Date(paste(year, week, "4", sep="-"), "%Y-%U-%u")
+  col_names[i] = as.character(new_date)
+}
+
+colnames(tidy_case_count) = col_names
+colnames(tidy_death_count) = col_names
+
+colnames(tidy_case_cum) = col_names
+colnames(tidy_death_cum) = col_names
+
+
+# According to the graphs above, we could summarize that the major trading partners of the US for both import and export are these nations: China, Mexico, Canada, Japan, Germany, the UK, and Korea.
+
+select_countries_func <- function(dataset) {
+  selected_dataset = dataset[(dataset$country=="China" | 
+                                dataset$country=="Mexico" | 
+                                dataset$country=="Canada" | 
+                                dataset$country=="Japan" | 
+                                dataset$country=="Germany" | 
+                                dataset$country=="United Kingdom" | 
+                                dataset$country=="South Korea"),]
+  return(selected_dataset)
+  }
+
+selected_case_count = select_countries_func(tidy_case_count)
+selected_death_count = select_countries_func(tidy_death_count)
+selected_case_cum = select_countries_func(tidy_case_cum)
+selected_death_cum = select_countries_func(tidy_death_cum)
+
+
+col_names_1 = colnames(selected_case_count)
+col_names_2 = c("2020 - Jan", "2020 - Feb", "2020 - Mar", "2020 - Apr", "2020 - May", 
+                "2020 - Jun", "2020 - Jul", "2020 - Aug", "2020 - Sep", "2020 - Oct", 
+                "2020 - Nov", "2020 - Dec", "2021 - Jan", "2021 - Feb", "2021 - Mar", 
+                "2021 - Apr", "2021 - May", "2021 - Jun", "2021 - Jul", "2021 - Aug", 
+                "2021 - Sep")
+
+my_dates = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", 
+             "Aug", "Sep", "Oct", "Nov", "Dec")
+
+to_month_fct <- function(selected_dataset,nrows){
+  rearranged_df <- data.frame(matrix(ncol = length(col_names_2), nrow = nrows))
+  colnames(rearranged_df) = col_names_2
+  rearranged_df[is.na(rearranged_df)] = 0
+  
+  for (i_date in 4:length(col_names_1)){
+  date_list = str_split(col_names_1[i_date], '-')
+  date_year = date_list[[1]][1]
+  date_month = my_dates[as.numeric(date_list[[1]][2])]
+  rearranged_date = paste(date_year,"-",date_month)
+  for (i_country in 1:nrows){
+    rearranged_df[[rearranged_date]][[i_country]] = rearranged_df[[rearranged_date]][[i_country]] + 
+      selected_dataset[[col_names_1[i_date]]][[i_country]]
+    }
+  }
+  
+  rearranged_df$country = selected_dataset$country
+  
+  col_order <- c("country", 
+                 "2020 - Jan", "2020 - Feb", "2020 - Mar", "2020 - Apr", "2020 - May", 
+                 "2020 - Jun", "2020 - Jul", "2020 - Aug", "2020 - Sep", "2020 - Oct", 
+                 "2020 - Nov", "2020 - Dec", "2021 - Jan", "2021 - Feb", "2021 - Mar", 
+                 "2021 - Apr", "2021 - May", "2021 - Jun", "2021 - Jul", "2021 - Aug", 
+                 "2021 - Sep")
+  rearranged_df <- rearranged_df[, col_order]
+  
+  return(rearranged_df)
+}
+
+monthly_country_case_count = to_month_fct(selected_case_count,7)
+monthly_country_death_count = to_month_fct(selected_death_count,7)
+
+monthly_country_case_count2 = monthly_country_case_count %>%
+  pivot_longer(!country, names_to = "Date", values_to = "Count")
+
+
+monthly_country_death_count2 = monthly_country_death_count %>%
+  pivot_longer(!country, names_to = "Date", values_to = "Count")
+```
+
+
+```{r fig.height = 6, fig.width = 8}
+
+ggplot(data=monthly_country_case_count2, 
+                    aes(x= fct_relevel(Date, col_names_2), 
+                        y=Count,
+                        group=country)) +
+  geom_line(aes(color=country))+
+  xlab("Date") +
+  ylab("Case Counts")+
+  ggtitle("The COVID-19 Cases in the Closest Trading Partners")+
+  theme(axis.text.x = element_text(angle = 90),
+        axis.text=element_text(size=6))
+
+
+```
+
+
+```{r fig.height = 6, fig.width = 8}
+
+ggplot(data=monthly_country_death_count2, 
+       aes(x= fct_relevel(Date, col_names_2), 
+           y=Count,
+           group=country)) +
+  geom_line(aes(color=country))+
+  xlab("Date") +
+  ylab("Death Counts")+
+  ggtitle("The COVID-19 Death in the Closest Trading Partners")+
+  theme(axis.text.x = element_text(angle = 90),
+        axis.text=element_text(size=6))
+
+
+```
+
+
+Now we’ve established close trading partners with US and identified the partners who were most affected during the pandemic period. We want to know if this could all be attributed to Covid. To understand this, we decide to take a look at the Covid situation for the top trading partner countries. The above line charts are the Covid case counts and death counts respectively for the top 7 partner countries. For the diagnosing cases, we observe a similar pattern among different countries. The lines are quite correlated in the sense that they usually peak together or with a slight delay. This is quite intuitive as the huge extent of globalization often accelerate the transmission of Covid-19.
+
+However, a more counter-intuitive observation is that countries with very high death rate such as UK and Germany are not the ones that experience the largest decrease in trading values from what we can tell in the annual plot in Graph 5. While countries with the most significant drop, such as Canada and China, don’t appear to be the most severe ones in this death counts plot. This could be due to a variety of reasons: for instance, the base trading amount is different, so a multiplying factor on the base could have effect to a different extent; the population and production mode is different, which lead to a varying response effectiveness under the Covid; and various other confounding variables such as exchange rate might also account for this reverse relationship.
+
+
+### Surprise is what shock the economy the most
+###### Graph 7
+
+```{r}
+
+column_order = c("2019 - Jan", "2019 - Feb", "2019 - Mar", "2019 - Apr",
+                 "2019 - May", "2019 - Jun", "2019 - Jul", "2019 - Aug",
+                 "2019 - Sep", "2019 - Oct", "2019 - Nov", "2019 - Dec",
+                 "2020 - Jan", "2020 - Feb", "2020 - Mar", "2020 - Apr", 
+                 "2020 - May", "2020 - Jun", "2020 - Jul", "2020 - Aug", 
+                 "2020 - Sep", "2020 - Oct", "2020 - Nov", "2020 - Dec", 
+                 "2021 - Jan", "2021 - Feb", "2021 - Mar", "2021 - Apr", 
+                 "2021 - May", "2021 - Jun", "2021 - Jul", "2021 - Aug")
+
+column_order2 = rep(column_order,2)
+
+int_trade_exp$Period = column_order2 
+int_trade_imp$Period = column_order2
+
+Exp_bar = ggplot(int_trade_exp, aes(fill=variable, 
+                                    y=value, 
+                                    x=fct_inorder(Period, ordered = NA)
+                                    )) + 
+  geom_bar(position="dodge", stat="identity")+
+  xlab("Period")+
+  ylab("Export Amount")+
+  ggtitle("Export Amount of Goods and Services")+
+  theme(axis.text.x = element_text(angle = 90), 
+        axis.text=element_text(size=6))+
+  theme(legend.position = "none") +
+  theme(axis.title.x = element_blank())+ 
+  theme(legend.title = element_blank())
+
+Imp_bar = ggplot(int_trade_imp, aes(fill=variable, 
+                                    y=value, 
+                                    x=fct_inorder(Period, ordered = NA)
+                                    )) + 
+  geom_bar(position="dodge", stat="identity")+
+  xlab("Period")+
+  ylab("Export Amount")+
+  ggtitle("Import Amount of Goods and Services")+
+  theme(axis.text.x = element_text(angle = 90), 
+        axis.text=element_text(size=6))+
+  theme(legend.position="bottom")
+
+us_covid_count = tidy_case_count[(tidy_case_count$country == "United States Of America"),]
+us_covid_monthly_count = to_month_fct(us_covid_count,1)
+
+us_covid_monthly_count = subset(us_covid_monthly_count, 
+                                select = -c(`2021 - Sep`) )
+
+us_covid_monthly_count$`2019 - Jan` = NA
+us_covid_monthly_count$`2019 - Feb` = NA
+us_covid_monthly_count$`2019 - Mar` = NA
+us_covid_monthly_count$`2019 - Apr` = NA
+us_covid_monthly_count$`2019 - May` = NA
+us_covid_monthly_count$`2019 - Jun` = NA
+us_covid_monthly_count$`2019 - Jul` = NA
+us_covid_monthly_count$`2019 - Aug` = NA
+us_covid_monthly_count$`2019 - Sep` = NA
+us_covid_monthly_count$`2019 - Oct` = NA
+us_covid_monthly_count$`2019 - Nov` = NA
+us_covid_monthly_count$`2019 - Dec` = NA
+
+us_covid_monthly_count2 = us_covid_monthly_count %>%
+  pivot_longer(!country, names_to = "Date", values_to = "Count")
+
+us_covid_line = ggplot(data=us_covid_monthly_count2 , 
+       aes(x= fct_relevel(Date, column_order), 
+           y=Count, 
+           group=1)) +
+  geom_line(color = "red")+
+  xlab("Date") +
+  ylab("Case Counts")+
+  ggtitle("The COVID-19 Cases in the US")+
+  theme(axis.text.x = element_text(angle = 90),
+        axis.text=element_text(size=6))+
+  theme(axis.title.x = element_blank())
+
+
+```
+
+
+
+```{r fig.height = 10, fig.width = 8}
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(3, 1)))
+print(Exp_bar, vp = viewport(layout.pos.row = 2, layout.pos.col=1))
+print(Imp_bar, vp = viewport(layout.pos.row = 3, layout.pos.col=1))
+print(us_covid_line, vp = viewport(layout.pos.row = 1, layout.pos.col=1))
+
+```
+
+In the combination of three plots above, we planned to compare the monthly detected COVID-19 cases in the US with the American international trades from temporal perspective, to examine whether the massive COVID-19 cases led to the declination in trading amounts. Nevertheless, according to the graphs above, it seems that the declination in trades in fact occurred during the period from February 2020 to September 2020, which was the beginning stage of COVID-19, and the detected cases were comparatively modest. By the contrast, at the globally maximal peak of COVID-19 cases at the December 2020, the corresponding trading amount was indeed recovering. Moreover, from Jan 2021 to Aug 2021, though the detected COVID-19 cases were much more excessive than those in the beginning stage, the international trades of the US in fact were enjoying an overall rejuvenation. 
+
+Thus, we may conclude:
+
+- The fall in trading amount mostly occur at the beginning stage of COVID-19
+
+- The rise and fall in the COVID-19 cases in the US did not indicate the trading loss.
+
+Such phenomenon may be explained from various aspects. While the COVID-19 first hit the US in early 2020, people are fully surprised and no one, both individuals and firms, are prepared for this. It provoked huge panic among the population, caused interruptions in production, and disrupted the normal supply chain and logistics. Although there is another wave of huge rise in Covid cases at the end of 2020, we can see for this time, the dent on the bar charts is much smaller compared with the previous hit. Since people are now better prepared for this situation, and plenty of measures to cope with this circumstance has emerged, it’s reasonable that the hit is no longer as impactful as before. Indeed, this fact for unexpectedness also applies to many other aspects of the economy as well, especially in the financial market.
+
+
+###### Graph 8
+
+```{r}
+
+countries_quarters = read_excel("ft900xlsx/exh20.xlsx",skip = 4)
+
+div = which(countries_quarters$`Country and Area` == "Balance"|
+              countries_quarters$`Country and Area` == "Exports"|
+              countries_quarters$`Country and Area` == "Imports")
+
+end_ind = which(countries_quarters$`Country and Area` == "South/Central America")
+
+balance_ind = 2:(div[2]-1)
+export_ind = (div[2]+1):(div[3]-1)
+import_ind = (div[3]+1):end_ind[3]
+
+
+countries_quarters_bal = countries_quarters[balance_ind, ]
+countries_quarters_exp = countries_quarters[export_ind, ]
+countries_quarters_imp = countries_quarters[import_ind, ]
+
+
+countries_quarters_exp2 = subset(countries_quarters_exp, select = -c(8,9,10))
+countries_quarters_imp2 = subset(countries_quarters_imp, select = -c(8,9,10))
+
+country_export_graph <- function(country_name){
+  chn_exp = countries_quarters_exp2[(countries_quarters_exp2$`Country and Area` == country_name),]
+  rearrange_country_df = chn_exp %>%
+    pivot_longer(!`Country and Area`, 
+                 names_to = "Quarters", 
+                 values_to = "Amount")
+  chn_Exp_bar = ggplot(rearrange_country_df,
+                       aes(y = as.numeric(Amount), 
+                           x=fct_inorder(Quarters, ordered = NA)
+                           )) + 
+    geom_bar(stat= "identity", fill = "navyblue") +
+    xlab("Date") +
+    ylab("Case Counts") +
+    # ylim(0, 100000)+
+    ggtitle(paste("The Export Amount of", country_name))+
+    theme(axis.text.x = element_text(angle = 90),
+          axis.text=element_text(size=4))+
+    theme(axis.title.x = element_blank())+
+    theme(plot.title = element_text(size = 6, face = "bold"))
+  
+  return(chn_Exp_bar)
+  }
+
+country_import_graph <- function(country_name){
+  chn_exp = countries_quarters_imp2[(countries_quarters_imp2$`Country and Area` == country_name),]
+  rearrange_country_df = chn_exp %>%
+    pivot_longer(!`Country and Area`, 
+                 names_to = "Quarters", 
+                 values_to = "Amount")
+  chn_Exp_bar = ggplot(rearrange_country_df,
+                       aes(y = as.numeric(Amount), 
+                           x=fct_inorder(Quarters, ordered = NA)
+                           )) + 
+    geom_bar(stat= "identity", fill = "navyblue") +
+    # ylim(0,150000)+
+    xlab("Date") +
+    ylab("Case Counts") +
+    ggtitle(paste("The Import Amount of", country_name))+
+    theme(axis.text.x = element_text(angle = 90),
+          axis.text=element_text(size=4))+
+    theme(axis.title.x = element_blank())+
+    theme(plot.title = element_text(size = 6, face = "bold"))
+  
+  return(chn_Exp_bar)
+  }
+
+
+covid_line_graph <- function(country_name){
+  covid_data = monthly_country_case_count2[(monthly_country_case_count2$country == country_name),]
+  cov_line = ggplot(data=covid_data, 
+                    aes(x= fct_inorder(Date, ordered = NA), 
+                        y=Count, group=1)) +
+    geom_line(color= "firebrick") +
+    xlab("Date") +
+    ylab("Case Counts")+
+    ggtitle(paste("The COVID-19 Cases in", country_name))+
+    theme(axis.text.x = element_text(angle = 90),
+          axis.text=element_text(size=4))+
+    theme(plot.title = element_text(size = 6, face = "bold"))
+  
+  return(cov_line)
+}
+
+chn_imp = country_import_graph("China")
+can_imp = country_import_graph("Canada")
+mex_imp = country_import_graph("Mexico")
+jap_imp = country_import_graph("Japan")
+deu_imp = country_import_graph("Germany")
+gbr_imp = country_import_graph("United Kingdom")
+kor_imp = country_import_graph("Korea, South")
+
+chn_exp = country_export_graph("China")
+can_exp = country_export_graph("Canada")
+mex_exp = country_export_graph("Mexico")
+jap_exp = country_export_graph("Japan")
+deu_exp = country_export_graph("Germany")
+gbr_exp = country_export_graph("United Kingdom")
+kor_exp = country_export_graph("Korea, South")
+
+
+
+chn_cov = covid_line_graph("China")
+can_cov = covid_line_graph("Canada")
+mex_cov = covid_line_graph("Mexico")
+jap_cov = covid_line_graph("Japan")
+deu_cov = covid_line_graph("Germany")
+gbr_cov = covid_line_graph("United Kingdom")
+kor_cov = covid_line_graph("South Korea")
+
+```
+
+
+
+```{r fig.height = 6, fig.width = 14}
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(3, 7)))
+print(chn_exp, vp = viewport(layout.pos.row = 2, layout.pos.col=1))
+print(chn_imp, vp = viewport(layout.pos.row = 3, layout.pos.col=1))
+print(chn_cov, vp = viewport(layout.pos.row = 1, layout.pos.col=1))
+
+print(can_exp, vp = viewport(layout.pos.row = 2, layout.pos.col=2))
+print(can_imp, vp = viewport(layout.pos.row = 3, layout.pos.col=2))
+print(can_cov, vp = viewport(layout.pos.row = 1, layout.pos.col=2))
+
+print(mex_exp, vp = viewport(layout.pos.row = 2, layout.pos.col=3))
+print(mex_imp, vp = viewport(layout.pos.row = 3, layout.pos.col=3))
+print(mex_cov, vp = viewport(layout.pos.row = 1, layout.pos.col=3))
+
+print(jap_exp, vp = viewport(layout.pos.row = 2, layout.pos.col=4))
+print(jap_imp, vp = viewport(layout.pos.row = 3, layout.pos.col=4))
+print(jap_cov, vp = viewport(layout.pos.row = 1, layout.pos.col=4))
+
+print(deu_exp, vp = viewport(layout.pos.row = 2, layout.pos.col=5))
+print(deu_imp, vp = viewport(layout.pos.row = 3, layout.pos.col=5))
+print(deu_cov, vp = viewport(layout.pos.row = 1, layout.pos.col=5))
+
+print(gbr_exp, vp = viewport(layout.pos.row = 2, layout.pos.col=6))
+print(gbr_imp, vp = viewport(layout.pos.row = 3, layout.pos.col=6))
+print(gbr_cov, vp = viewport(layout.pos.row = 1, layout.pos.col=6))
+
+print(kor_exp, vp = viewport(layout.pos.row = 2, layout.pos.col=7))
+print(kor_imp, vp = viewport(layout.pos.row = 3, layout.pos.col=7))
+print(kor_cov, vp = viewport(layout.pos.row = 1, layout.pos.col=7))
+
+```
+
+
+In the grouped graphs above, we repeated the operation we did for US above (for Graph 7) to create faceted graph for each trading partner and compare the correlation between their trading amount with the US and the cases of COVID-19. Regarding the graphs above, we firstly observe similar patterns in COVID cases for adjacent countries or countries within the same continent. For instance, Japan and South Korea look close on their COVID case lines. And we know China in this case is a special outlier as it suffers from the pandemic earlier than most other countries, so it’s as expected to see a different pattern for China’s data. This also partially explain the issue that we had in Graph 5: as the Covid case counts for China in 2020 would be much less than other countries, directly use it in the comparison would be somewhat inaccurate to account for the drop in US-China trade amount.
+
+Likewise, we also found that, like the conclusion in graph 7, though the patterns of COVID-19’s spread were various across nations, their fluctuations in trading amount were similar: the declinations all occurred during the first or second quarter of 2020. Thus, such inconsistency also states that for the closest trading partners of the US, the accumulation of COVID-19 cases would not directly lead to the trading loss.
+
+Therefore, we may conclude that:
+
+- Most trading partners of the US bore trading loss at the initial states of the COVID-19 in their countries.
+
+- There is no direct correlation between the maximal COVID-19 cases and the trading loss.
+
+
+
+
+
+###### Graph 9
+
+
+```{r}
+
+covid_raw_data = read.csv(file = 'COVID-19data/dataset 2/data.csv')
+
+covid_weekly_case = covid_raw_data[covid_raw_data$indicator == 'cases',]
+covid_weekly_death = covid_raw_data[covid_raw_data$indicator == 'deaths',]
+
+tidy_covid_weekly_func <- function(covid_weekly,mode){
+  if (mode == "cum"){
+    id_var = "cumulative_count"
+    }
+  else{id_var = "weekly_count"
+    }
+
+  tidy_weekly = pivot_wider(covid_weekly[,c("country", 
+                                            "country_code", 
+                                            "continent", 
+                                            id_var,
+                                            "year_week")], 
+                            names_from = year_week, 
+                            values_from = id_var,
+                            values_fill = 0)
+  
+  tidy_weekly = tidy_weekly[order(tidy_weekly$continent,
+                                  tidy_weekly$country),]
+  
+  return(tidy_weekly)
+}
+
+tidy_case_cum = tidy_covid_weekly_func(covid_weekly_case,"cum")
+tidy_case_count = tidy_covid_weekly_func(covid_weekly_case,"count")
+
+tidy_death_cum = tidy_covid_weekly_func(covid_weekly_death,"cum")
+tidy_death_count = tidy_covid_weekly_func(covid_weekly_death,"count")
+
+# The four datasets above are final outputs
+```
+
+```{r}
+col_names = colnames(tidy_case_count)
+
+for (i in 4: length(col_names)){
+  date_ls = str_split(col_names[i], "-")
+  year = as.numeric(date_ls[[1]][1])
+  week = as.numeric(date_ls[[1]][2])-1
+  new_date = as.Date(paste(year, week, "4", sep="-"), "%Y-%U-%u")
+  col_names[i] = as.character(new_date)
+}
+
+colnames(tidy_case_count) = col_names
+colnames(tidy_death_count) = col_names
+
+colnames(tidy_case_cum) = col_names
+colnames(tidy_death_cum) = col_names
+
+```
+
+
+```{r}
+
+trade_countries_2021 = read_excel("ft900xlsx/exh14.xlsx",skip = 5)
+
+trade_countries_2021[trade_countries_2021 == "(R)"] = NA
+
+# Remove the useless rows
+trade_countries_2021 = trade_countries_2021[1:(which(trade_countries_2021$`Item (1)` == "Unidentified Countries (2)")-1), ]
+
+col_subnames = trade_countries_2021[1,]
+col_subnames = col_subnames[!is.na(col_subnames)]
+
+trade_countries_2021 = trade_countries_2021[ , colSums(is.na(trade_countries_2021)) <= 1]
+
+trade_countries_2021 = trade_countries_2021 %>%
+  filter(complete.cases(.))
+
+col_names = colnames(trade_countries_2021)
+
+for (i in 2:length(col_names)){
+  if (col_names[i] %in% c("Balance", "Exports", "Imports")){
+    prefix = col_names[i]
+  }
+  col_names[i] = paste(prefix, col_subnames[i-1])
+}
+
+colnames(trade_countries_2021) = col_names
+
+trade_countries_2021 = trade_countries_2021[!(
+  trade_countries_2021$`Item (1)` =="Total Balance of Payments Basis"|
+    trade_countries_2021$`Item (1)` =="Net Adjustments"|
+    trade_countries_2021$`Item (1)` =="Total Census Basis"),]
+
+cont_list = rep(NA, length(trade_countries_2021$`Item (1)`))
+
+for (i in 1:length(trade_countries_2021$`Item (1)`)){
+  if (trade_countries_2021$`Item (1)`[i] == "North America"|
+      trade_countries_2021$`Item (1)`[i] == "Europe"|
+      trade_countries_2021$`Item (1)`[i] == "Pacific Rim Countries"|
+      trade_countries_2021$`Item (1)`[i] == "South/Central America"|
+      trade_countries_2021$`Item (1)`[i] == "Africa"|
+      trade_countries_2021$`Item (1)`[i] == "Other Countries"
+      ){
+        prefix = trade_countries_2021$`Item (1)`[i]
+      }
+  else{
+    cont_list[i] = prefix
+  }
+}
+
+trade_countries_2021$Continent = cont_list
+
+trade_countries_2021 = trade_countries_2021 %>%
+  filter(complete.cases(.))
+
+```
+
+```{r}
+
+trade_countries_2020 = read_excel("ft900xlsx/exh14a.xlsx",skip = 5)
+
+trade_countries_2020[trade_countries_2020 == "(R)"] = NA
+
+# Remove the useless rows
+trade_countries_2020 = trade_countries_2020[1:(which(trade_countries_2020$`Item (1)` == "Unidentified Countries (2)")-1), ]
+
+col_subnames = trade_countries_2020[1,]
+col_subnames = col_subnames[!is.na(col_subnames)]
+
+trade_countries_2020 = trade_countries_2020[ , colSums(is.na(trade_countries_2020)) <= 1]
+
+trade_countries_2020 = trade_countries_2020 %>%
+  filter(complete.cases(.))
+
+col_names = colnames(trade_countries_2020)
+
+for (i in 2:length(col_names)){
+  if (col_names[i] %in% c("Balance", "Exports", "Imports")){
+    prefix = col_names[i]
+  }
+  col_names[i] = paste(prefix, col_subnames[i-1])
+}
+
+colnames(trade_countries_2020) = col_names
+
+trade_countries_2020 = trade_countries_2020[!(
+  trade_countries_2020$`Item (1)` =="Total Balance of Payments Basis"|
+    trade_countries_2020$`Item (1)` =="Net Adjustments"|
+    trade_countries_2020$`Item (1)` =="Total Census Basis"),]
+
+cont_list = rep(NA, length(trade_countries_2020$`Item (1)`))
+
+for (i in 1:length(trade_countries_2020$`Item (1)`)){
+  if (trade_countries_2020$`Item (1)`[i] == "North America"|
+      trade_countries_2020$`Item (1)`[i] == "Europe"|
+      trade_countries_2020$`Item (1)`[i] == "Pacific Rim Countries"|
+      trade_countries_2020$`Item (1)`[i] == "South/Central America"|
+      trade_countries_2020$`Item (1)`[i] == "Africa"|
+      trade_countries_2020$`Item (1)`[i] == "Other Countries"
+      ){
+        prefix = trade_countries_2020$`Item (1)`[i]
+      }
+  else{
+    cont_list[i] = prefix
+  }
+}
+
+trade_countries_2020$Continent = cont_list
+
+trade_countries_2020 = trade_countries_2020 %>%
+  filter(complete.cases(.))
+
+```
+
+
+
+
+
+```{r}
+# https://cran.r-project.org/web/packages/wpp2019/wpp2019.pdf
+# population unit (thousand)
+library(wpp2019)
+data(pop)
+pop2020 = pop[c(2,17)] %>% rename("pop"="2020")
+# `2020-07-30`;("2020-12-31");"2021-07-29"
+tidy_case_cum_2yr = tidy_case_cum[c(1:3,34,56,87)]
+tidy_case_cum_2yr = tidy_case_cum_2yr %>% mutate(`2021-07-29-new`=`2021-07-29`-`2020-12-31`) %>% select(-c("2020-12-31","2021-07-29"))
+countries_ytd_2020 = trade_countries_2020[c(1,7,10,11)]
+countries_ytd_2021 = trade_countries_2021[c(1,7,10,11)]
+```
+
+
+```{r}
+# ytd2020_cum_cases_per_thousand
+cases_rate = tidy_case_cum_2yr %>% 
+  inner_join(pop2020, by=c("country"="name")) %>% mutate(ytd2020_cases_rate=`2020-07-30`/pop, ytd2021_cases_rate=`2021-07-29-new`/pop)
+
+trade_2020 = countries_ytd_2020 %>% mutate(ytd2020_exp=as.numeric(`Exports Year-to-Date\r\n2020`), ytd2020_imp=as.numeric(`Imports Year-to-Date\r\n2020`))
+
+trade_2021 = countries_ytd_2021 %>% mutate(ytd2021_exp=as.numeric(`Exports Year-to-Date\r\n2021`), ytd2021_imp=as.numeric(`Imports Year-to-Date\r\n2021`))
+```
+
+
+
+```{r}
+# data: trade_case_combined_2020
+data = trade_2020 %>% 
+  inner_join(cases_rate, by=c("Item (1)"="country")) %>% select("country"=1, "continent"=4, "case_rate"=13, "exp"=5, "imp"=6)
+
+world <- map_data("world")
+```
+
+
+
+```{r fig.height = 6, fig.width = 8}
+# Plotting
+library(cowplot)
+
+
+
+# create 3 buckets for case_rate
+quantiles_case_rate <- data %>%
+  pull(case_rate) %>%
+  quantile(probs = seq(0, 1, length.out = 4))
+
+# create 3 buckets for exp
+quantiles_exp <- data %>%
+  pull(exp) %>%
+  quantile(probs = seq(0, 1, length.out = 4))
+
+# create color scale that encodes two variables
+# red for case_rate and blue for exp
+bivariate_color_scale <- tibble(
+  "3 - 3" = "#3F2949", # high cases, high export
+  "2 - 3" = "#435786",
+  "1 - 3" = "#4885C1", # low cases, high export
+  "3 - 2" = "#77324C",
+  "2 - 2" = "#806A8A", # medium cases, medium export
+  "1 - 2" = "#89A1C8",
+  "3 - 1" = "#AE3A4E", # high cases, low export
+  "2 - 1" = "#BC7C8F",
+  "1 - 1" = "#CABED0" # low cases, low export
+) %>%
+  gather("group", "fill")
+
+
+data_clean <- data %>%
+  mutate(
+    case_rate_quantiles = cut(
+      case_rate,
+      breaks = quantiles_case_rate,
+      include.lowest = TRUE
+    ),
+    exp_quantiles = cut(
+      exp,
+      breaks = quantiles_exp,
+      include.lowest = TRUE
+    ),
+    group = paste(
+      as.numeric(case_rate_quantiles), "-",
+      as.numeric(exp_quantiles)
+    )
+  ) %>%
+  left_join(bivariate_color_scale, by = "group")
+
+
+world_subset = world %>% 
+  left_join(data_clean, by=c("region"="country"))
+
+
+
+
+
+map <- ggplot(world_subset, aes(x=long,y=lat,group=group.x)) +
+  geom_polygon(aes(fill=fill), color = "gray10", size = 0.1) +
+  scale_fill_identity()  +
+  ggtitle("2020 U.S. Export and Covid Cases by Selected Countries \n (rate: per thousand people)")
+
+
+
+
+
+# separate the groups
+bivariate_color_scale %<>%
+  separate(group, into = c("case_rate", "exp"), sep = " - ") %>%
+  mutate(case_rate = as.integer(case_rate),
+         exp = as.integer(exp))
+
+legend <- ggplot() +
+  geom_tile(
+    data = bivariate_color_scale,
+    mapping = aes(
+      x = case_rate,
+      y = exp,
+      fill = fill)
+  ) +
+  scale_fill_identity() +
+  labs(x = "3: Higher Case Rate",
+       y = "3: Higher Export") +
+  # theme_map() +
+  # make font small enough
+  theme(
+    axis.title = element_text(size = 6)
+  ) +
+  # quadratic tiles
+  coord_fixed()
+
+
+
+ggdraw() +
+  draw_plot(map, 0, 0, 1, 1) +
+  draw_plot(legend, 0.05, 0.25, 0.2, 0.2)
+```
+
+
+
+```{r fig.height = 6, fig.width = 8}
+
+
+# create 3 buckets for case_rate
+quantiles_case_rate <- data %>%
+  pull(case_rate) %>%
+  quantile(probs = seq(0, 1, length.out = 4))
+
+# create 3 buckets for imp
+quantiles_imp <- data %>%
+  pull(imp) %>%
+  quantile(probs = seq(0, 1, length.out = 4))
+
+# create color scale that encodes two variables
+# red for case_rate and blue for imp
+bivariate_color_scale <- tibble(
+  "3 - 3" = "#3F2949", # high cases, high import
+  "2 - 3" = "#435786",
+  "1 - 3" = "#4885C1", # low cases, high import
+  "3 - 2" = "#77324C",
+  "2 - 2" = "#806A8A", # medium cases, medium import
+  "1 - 2" = "#89A1C8",
+  "3 - 1" = "#AE3A4E", # high cases, low import
+  "2 - 1" = "#BC7C8F",
+  "1 - 1" = "#CABED0" # low cases, low import
+) %>%
+  gather("group", "fill")
+
+
+data_clean <- data %>%
+  mutate(
+    case_rate_quantiles = cut(
+      case_rate,
+      breaks = quantiles_case_rate,
+      include.lowest = TRUE
+    ),
+    imp_quantiles = cut(
+      imp,
+      breaks = quantiles_imp,
+      include.lowest = TRUE
+    ),
+    group = paste(
+      as.numeric(case_rate_quantiles), "-",
+      as.numeric(imp_quantiles)
+    )
+  ) %>%
+  left_join(bivariate_color_scale, by = "group")
+
+
+world_subset = world %>% 
+  left_join(data_clean, by=c("region"="country"))
+
+
+
+
+
+map <- ggplot(world_subset, aes(x=long,y=lat,group=group.x)) +
+  geom_polygon(aes(fill=fill), color = "gray10", size = 0.1) +
+  scale_fill_identity() +
+  ggtitle("2020 U.S. Import and Covid Cases by Selected Countries \n (rate: per thousand people)")
+
+
+
+
+
+# separate the groups
+bivariate_color_scale %<>%
+  separate(group, into = c("case_rate", "imp"), sep = " - ") %>%
+  mutate(case_rate = as.integer(case_rate),
+         imp = as.integer(imp))
+
+legend <- ggplot() +
+  geom_tile(
+    data = bivariate_color_scale,
+    mapping = aes(
+      x = case_rate,
+      y = imp,
+      fill = fill)
+  ) +
+  scale_fill_identity() +
+  labs(x = "3: Higher Case Rate",
+       y = "3: Higher Import") +
+  # theme_map() +
+  # make font small enough
+  theme(
+    axis.title = element_text(size = 6)
+  ) +
+  # quadratic tiles
+  coord_fixed()
+
+
+
+ggdraw() +
+  draw_plot(map, 0, 0, 1, 1) +
+  draw_plot(legend, 0.05, 0.25, 0.2, 0.2)
+```
+
+
+To conclude and summarize our discussion, we put forth an improved version of the world map at the end. By  combining both trading amount and Covid cases into our color scale, we obtained a more visually intuitive depiction of the interrelatedness of these two factors. For the measure that represents Covid severity, we choose the metric of Case Rate. This is defined as the number of cases per thousand people for each country. We used supplementary information from the library wpp2019 in R to determine the world population in 2020. We divided the export/import and the case rate into three levels based on their respective distribution and came up with the two-dimensional color scheme.
+
+In particular, for export, we can see that Brazil and France are two countries with high case rate and received high imports from US (US export to these countries); for import, France remains as the country with high case rate and exported a lot to the US (US import from it). Most South American countries are high in case rate but not as much engage in trading activities with US (seen as mostly red-ish), while most North American and Pacific Rim Countries are relatively low in case rate and involves in large amount of trading activities with US (seen as mostly blue-ish). For European countries, there’s a mix of behaviors and we’ll need to look into them case by case. And for African countries, the selected one shown in this graph appear to outperform most countries in terms of case rate but be aware that they are not representative of the whole picture for the African continent. It’s generally recognized that African countries are not very strong trading partners with the US and this is confirmed by their light purple-ish color.
+
+
+
+
+
