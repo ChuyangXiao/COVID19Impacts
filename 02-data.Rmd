@@ -1,29 +1,55 @@
 # Data sources
 
-<p style="color:red">Describe the data sources: who is responsible for collecting the data? How is it collected? If there were a choice of options, explain how you chose.
-Provide some basic information about the data set: types of variables, number of records, etc. Describe any issues / problems with the data, either known or that you discover.
-(suggested: approximately 1 page)</p>
+## COVID-19 Data from European Center for Disease Prevention and Control
+
+**Dataset : /COVID-19data/dataset 2/data.csv**
+
+The first data source comes from the [European Center for Disease Prevention and Control](https://www.ecdc.europa.eu/en/publications-data/data-national-14-day-notification-rate-covid-19), which includes the number of COVID-19 cases per 100 000 population and the 14-day notification rate of reported deaths per million population by week and country from the 1st week of 2020  (Jan.1st 2021) till the 39th week of 2021 (Oct.7th 2021). 
+
+This data set has 37036 records in total. Each row contains the corresponding data for a certain day and per country. Specifically, variables included in this data set are country related information-`country`, `country code`, `continent`, time information-`year-week`, count and statistics-`weekly count`, `rate_14_day`, `cumulative`, and indicator variable that distinguishes whether it's cases or deaths-`indicator`.
+
+```{r, echo=FALSE, results='asis'}
+# DataDescription<- readr::read_csv(here::here("./data/DatasetDescription.csv"))
+covid_raw_data = read.csv(file = 'COVID-19data/dataset 2/data.csv')
+
+vars = colnames(covid_raw_data)[c(-8,-10)]
+explains = c('Country name (chr)', '3 letter code for country (chr)', 'Geographical continent (chr)', 'Country population (num)', "Wether it's 'cases' or 'deaths' (chr)", 'Weekly count of cases or deaths (num)', 'The week number in a Year (chr)', 'Cumulative count of cases or deaths (num)')
+knitr::kable(data.frame(ColumnNames=vars, Description=explains), caption = "Major Columns Used",
+             row.names = F,font_size = 10)
+
+```
 
 
-* Source 1
-
-The first data source comes from the European Center for Disease Prevention and Control and includes the number of COVID-19 cases per 100 000 population and the 14-day notification rate of reported deaths per million population by week and country from the 1st week of 2020 till the 39th week of 2021 (7th Oct 2021). 
-
-This data set has 37036 records in total. Each row contains the corresponding data for a certain day and per country. Specifically, variables included in this data set are country related information-`country`, `country code`, and `continent` (type: string),  report type that distinguishes whether it's cases or deaths-`indicator` (type: string), time information-`year-week` (type: datetime), count and statistics-`weekly count`, `rate_14_day`, and `cumulative` (type: numerical).
-
-Link: https://www.ecdc.europa.eu/en/publications-data/data-national-14-day-notification-rate-covid-19
 
 
-* Source 2
+## International Trade Data from United States Census Bureau
 
-The second data source comes from the United States Census Bureau. It is a full report of the international trade the US participated in from 2020 to 2021. This report not only includes the trading time and trading amount with each trading partner of the US but also records the categories of the trading product. 
+**Dataset : /ft900xlsx/exh__.xlsx**
+
+The second data source comes from the [United States Census Bureau](https://www.census.gov/foreign-trade/Press-Release/current_press_release/index.html). It is a full report of the international trade the US participated in from 2020 to 2021. This report not only includes the trading time and trading amount with each trading partner of the US but also records the categories of the trading product. 
 
 There are in total 31 excel files from this source, with each presented and themed around a particular focus (such as by region, by end-use, by trade type and etc.). We discussed and decided to select 10 files that are most relevant to our investigation topics. Data files from this source are mostly represented in a tabular format. The most common variables are balance of payments (BOP) related numerals such as import, export, and balance in millions of dollars. Depending on the division basis, other variables include countries, goods categories, months and etc.
 
-Link: https://www.census.gov/foreign-trade/Press-Release/current_press_release/index.html
+
+Here are the 10 files that we selected from this source:
+
+File #        | File Name
+------------- | -------------
+exh1          | U.S. International Trade in Goods and Services 
+exh6          | U.S. Trade in Goods by Principal End-Use Category
+exh7          | U.S. Exports of Goods by End-Use Category and Commodity
+exh8          | U.S. Imports by End-Use Category and Commodity
+exh12         | U.S. Trade in Goods 
+exh13         | U.S. Trade in Goods by Principal End-Use Category
+exh14a        | U.S. Trade in Goods by Selected Countries and Areas - Prior Year
+exh14         | U.S. Trade in Goods by Selected Countries and Areas - Current Year
+exh20         | U.S. Trade in Goods and Services by Selected Countries and Areas - BOP Basis
+exh20a        | U.S. Trade in Goods by Selected Countries and Areas - BOP Basis 
+exh20b        | U.S. Trade in Services by Selected Countries and Areas 
 
 
-* Comment
+
+## Comments and Issues
 
 To ensure the reliability and quality of the data, we searched and collected both of our data from either government or public institution website. Chen collected the international trade related data and Chuyang gathered the Covid related data. In searching for possible options, we tried to find data that are not only trustworthy but also comprehensive. Since we hope to take a holistic view on the Covid impact, having information that span across longer time period would be beneficial to answering our questions, so this becomes a dominant criterion in choosing our data source.
 
